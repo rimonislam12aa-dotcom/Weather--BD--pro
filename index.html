@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#087e4b">
+<meta name="description" content="বাংলাদেশের আবহাওয়া, পূর্বাভাস ও কৃষি তথ্যের স্মার্ট প্ল্যাটফর্ম।">
+<title>Weather BD Pro | আবহাওয়া ও কৃষি</title>
+
+<style>
+:root {
+  --green:#087e4b;
+  --dark:#12372b;
+  --muted:#61736b;
+  --bg:#f3f8f5;
+  --white:#fff;
+  --line:#e2ece6;
+}
+
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  font-family:system-ui,"Noto Sans Bengali",sans-serif;
+  background:var(--bg);
+  color:var(--dark);
+}
+
+header {
+  background:linear-gradient(130deg,#075b3a,#0c9560);
+  color:white;
+  padding:28px 18px 35px;
+}
+
+.container {
+  width:min(100% - 28px,960px);
+  margin:auto;
+}
+
+.brand { font-size:13px; opacity:.9; }
+
+h1 {
+  font-size:clamp(25px,5vw,36px);
+  margin:8px 0;
+}
+
+.subtitle { color:#e1f4e9; }
+
+main { padding:20px 0 40px; }
+
+.search {
+  display:flex;
+  gap:9px;
+}
+
+input,button {
+  font:inherit;
+  padding:12px;
+  border-radius:12px;
+}
+
+input {
+  flex:1;
+  min-width:0;
+  border:1px solid var(--line);
+}
+
+button {
+  background:var(--green);
+  color:white;
+  border:0;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+  margin-top:16px;
+}
+
+.card {
+  background:var(--white);
+  border:1px solid var(--line);
+  border-radius:17px;
+  padding:18px;
+  box-shadow:0 5px 18px #12372b08;
+}
+
+.wide { grid-column:1/-1; }
+
+.label {
+  font-size:13px;
+  color:var(--muted);
+}
+
+.value {
+  font-size:22px;
+  font-weight:bold;
+}
+
+.hint {
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.6;
+}
+
+.weather-mark { font-size:35px; }
+
+.section-title {
+  font-size:19px;
+  margin:0 0 12px;
+}
+
+.pill {
+  display:inline-block;
+  background:#e8f6ee;
+  color:var(--green);
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:12px;
+}
+
+.empty {
+  padding:14px;
+  background:#f5faf7;
+  border-radius:12px;
+  color:var(--muted);
+  font-size:14px;
+}
+
+footer {
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  padding:10px 0 24px;
+}
+
+@media(max-width:560px) {
+  .grid { grid-template-columns:1fr; }
+  .wide { grid-column:auto; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="container">
+    <div class="brand">বাংলাদেশের আবহাওয়া ও কৃষি তথ্য</div>
+    <h1>🌦️ Weather BD Pro</h1>
+    <p class="subtitle">
+      আবহাওয়া জানুন, কৃষির সিদ্ধান্ত নিন আরও সহজে।
+    </p>
+  </div>
+</header>
+
+<main class="container">
+
+  <div class="search">
+    <input
+      id="districtSearch"
+      type="search"
+      placeholder="শহর বা জেলার নাম লিখুন..."
+      aria-label="শহর বা জেলার নাম"
+    >
+    <button id="searchBtn">খুঁজুন</button>
+  </div>
+
+  <section class="grid">
+
+    <article class="card wide">
+      <p class="label">নির্বাচিত স্থান</p>
+      <h2 class="section-title" id="placeName">বাংলাদেশ</h2>
+      <span class="pill">প্রাথমিক সংস্করণ</span>
+      <p class="hint">
+        আবহাওয়ার লাইভ তথ্য সংযুক্ত করার কাজ পরবর্তী ধাপে হবে।
+      </p>
+    </article>
+
+    <article class="card">
+      <p class="label">বর্তমান তাপমাত্রা</p>
+      <div class="weather-mark">🌡️</div>
+      <p class="value">— °C</p>
+      <p class="hint">তথ্য এখনো সংযুক্ত হয়নি</p>
+    </article>
+
+    <article class="card">
+      <p class="label">আকাশের অবস্থা</p>
+      <div class="weather-mark">⛅</div>
+      <p class="value">অপেক্ষমাণ</p>
+      <p class="hint">লাইভ আবহাওয়ার তথ্য আসবে</p>
+    </article>
+
+    <article class="card">
+      <p class="label">আর্দ্রতা</p>
+      <p class="value">— %</p>
+      <p class="hint">তথ্য এখনো সংযুক্ত হয়নি</p>
+    </article>
+
+    <article class="card">
+      <p class="label">বাতাসের গতি</p>
+      <p class="value">— কিমি/ঘণ্টা</p>
+      <p class="hint">তথ্য এখনো সংযুক্ত হয়নি</p>
+    </article>
+
+    <article class="card wide">
+      <h2 class="section-title">📅 আবহাওয়ার পূর্বাভাস</h2>
+      <div class="empty">
+        পূর্বাভাসের তথ্য পরবর্তী ধাপে যুক্ত করা হবে।
+      </div>
+    </article>
+
+    <article class="card wide">
+      <h2 class="section-title">🌱 কৃষি পরামর্শ</h2>
+      <div class="empty">
+        আবহাওয়ার তথ্যের ভিত্তিতে কৃষি পরামর্শ দেখানোর ব্যবস্থা তৈরি করা হচ্ছে।
+      </div>
+    </article>
+
+    <article class="card wide">
+      <h2 class="section-title">🔔 আবহাওয়া সতর্কতা</h2>
+      <div class="empty">
+        নির্ভরযোগ্য সতর্কতা-উৎস যুক্ত না হওয়া পর্যন্ত এখানে কোনো সতর্কতা দেখানো হবে না।
+      </div>
+    </article>
+
+  </section>
+</main>
+
+<footer class="container">
+  Weather BD Pro · সংস্করণ 0.1 · তথ্য যুক্ত করার কাজ চলমান
+</footer>
+
+<script>
+const input = document.getElementById("districtSearch");
+
+document.getElementById("searchBtn").addEventListener("click", () => {
+  const place = input.value.trim();
+
+  if (place) {
+    document.getElementById("placeName").textContent = place;
+  }
+});
+
+input.addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    document.getElementById("searchBtn").click();
+  }
+});
+</script>
+
+</body>
+</html>
