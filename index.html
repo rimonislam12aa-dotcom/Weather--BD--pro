@@ -17,7 +17,9 @@
   --line:#e2ece6;
 }
 
-* { box-sizing:border-box; }
+* {
+  box-sizing:border-box;
+}
 
 body {
   margin:0;
@@ -37,47 +39,22 @@ header {
   margin:auto;
 }
 
-.brand { font-size:13px; opacity:.9; }
+.brand {
+  font-size:13px;
+  opacity:.9;
+}
 
 h1 {
   font-size:clamp(25px,5vw,36px);
   margin:8px 0;
 }
 
-.subtitle { color:#e1f4e9; }
-
-main { padding:20px 0 40px; }
-
-.search {
-  display:flex;
-  gap:9px;
+.subtitle {
+  color:#e1f4e9;
 }
 
-input,button {
-  font:inherit;
-  padding:12px;
-  border-radius:12px;
-}
-
-input {
-  flex:1;
-  min-width:0;
-  border:1px solid var(--line);
-}
-
-button {
-  background:var(--green);
-  color:white;
-  border:0;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.grid {
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:14px;
-  margin-top:16px;
+main {
+  padding:20px 0 40px;
 }
 
 .card {
@@ -86,18 +63,33 @@ button {
   border-radius:17px;
   padding:18px;
   box-shadow:0 5px 18px #12372b08;
+  margin-bottom:14px;
 }
 
-.wide { grid-column:1/-1; }
+.grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+
+.grid .card {
+  margin:0;
+}
+
+.wide {
+  grid-column:1/-1;
+}
 
 .label {
   font-size:13px;
   color:var(--muted);
+  margin:0 0 8px;
 }
 
 .value {
-  font-size:22px;
+  font-size:25px;
   font-weight:bold;
+  margin:8px 0;
 }
 
 .hint {
@@ -106,7 +98,9 @@ button {
   line-height:1.6;
 }
 
-.weather-mark { font-size:35px; }
+.weather-mark {
+  font-size:32px;
+}
 
 .section-title {
   font-size:19px;
@@ -122,12 +116,33 @@ button {
   font-size:12px;
 }
 
-.empty {
-  padding:14px;
-  background:#f5faf7;
+.status {
+  padding:12px;
   border-radius:12px;
-  color:var(--muted);
+  background:#e8f6ee;
+  color:#075b3a;
   font-size:14px;
+  margin:14px 0;
+}
+
+.status.error {
+  background:#fff0ed;
+  color:#9b2c18;
+}
+
+button {
+  font:inherit;
+  padding:11px 15px;
+  border-radius:12px;
+  background:var(--green);
+  color:white;
+  border:0;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:disabled {
+  opacity:.6;
 }
 
 footer {
@@ -138,8 +153,12 @@ footer {
 }
 
 @media(max-width:560px) {
-  .grid { grid-template-columns:1fr; }
-  .wide { grid-column:auto; }
+  .grid {
+    grid-template-columns:1fr;
+  }
+  .wide {
+    grid-column:auto;
+  }
 }
 </style>
 </head>
@@ -158,98 +177,207 @@ footer {
 
 <main class="container">
 
-  <div class="search">
-    <input
-      id="districtSearch"
-      type="search"
-      placeholder="শহর বা জেলার নাম লিখুন..."
-      aria-label="শহর বা জেলার নাম"
-    >
-    <button id="searchBtn">খুঁজুন</button>
+<section class="card">
+  <p class="label">পরীক্ষার স্থান</p>
+  <h2 class="section-title" id="placeName">
+    ঢাকা, বাংলাদেশ
+  </h2>
+
+  <span class="pill">Open-Meteo লাইভ API পরীক্ষা</span>
+
+  <p class="hint">
+    প্রথম পরীক্ষায় ঢাকার আবহাওয়ার তথ্য দেখানো হচ্ছে।
+  </p>
+
+  <div id="status" class="status" role="status">
+    আবহাওয়ার তথ্য আনা হচ্ছে…
   </div>
 
-  <section class="grid">
+  <button id="refreshBtn" type="button">
+    তথ্য আবার আনুন
+  </button>
+</section>
 
-    <article class="card wide">
-      <p class="label">নির্বাচিত স্থান</p>
-      <h2 class="section-title" id="placeName">বাংলাদেশ</h2>
-      <span class="pill">প্রাথমিক সংস্করণ</span>
-      <p class="hint">
-        আবহাওয়ার লাইভ তথ্য সংযুক্ত করার কাজ পরবর্তী ধাপে হবে।
-      </p>
-    </article>
+<section class="grid" aria-label="ঢাকার আবহাওয়ার তথ্য">
 
-    <article class="card">
-      <p class="label">বর্তমান তাপমাত্রা</p>
-      <div class="weather-mark">🌡️</div>
-      <p class="value">— °C</p>
-      <p class="hint">তথ্য এখনো সংযুক্ত হয়নি</p>
-    </article>
+  <article class="card">
+    <p class="label">বর্তমান তাপমাত্রা</p>
+    <div class="weather-mark">🌡️</div>
+    <p class="value" id="temperature">— °C</p>
+    <p class="hint" id="feelsLike">
+      অনুভূত তাপমাত্রা: —
+    </p>
+  </article>
 
-    <article class="card">
-      <p class="label">আকাশের অবস্থা</p>
-      <div class="weather-mark">⛅</div>
-      <p class="value">অপেক্ষমাণ</p>
-      <p class="hint">লাইভ আবহাওয়ার তথ্য আসবে</p>
-    </article>
+  <article class="card">
+    <p class="label">আকাশের অবস্থা</p>
+    <div class="weather-mark" id="weatherIcon">⛅</div>
+    <p class="value" id="weatherText">তথ্য অপেক্ষমাণ</p>
+    <p class="hint" id="updatedAt">আপডেট: —</p>
+  </article>
 
-    <article class="card">
-      <p class="label">আর্দ্রতা</p>
-      <p class="value">— %</p>
-      <p class="hint">তথ্য এখনো সংযুক্ত হয়নি</p>
-    </article>
+  <article class="card">
+    <p class="label">বাতাসের আর্দ্রতা</p>
+    <p class="value" id="humidity">— %</p>
+    <p class="hint">আপেক্ষিক আর্দ্রতা</p>
+  </article>
 
-    <article class="card">
-      <p class="label">বাতাসের গতি</p>
-      <p class="value">— কিমি/ঘণ্টা</p>
-      <p class="hint">তথ্য এখনো সংযুক্ত হয়নি</p>
-    </article>
+  <article class="card">
+    <p class="label">বাতাসের গতি</p>
+    <p class="value" id="wind">— কিমি/ঘণ্টা</p>
+    <p class="hint">১০ মিটার উচ্চতায়</p>
+  </article>
 
-    <article class="card wide">
-      <h2 class="section-title">📅 আবহাওয়ার পূর্বাভাস</h2>
-      <div class="empty">
-        পূর্বাভাসের তথ্য পরবর্তী ধাপে যুক্ত করা হবে।
-      </div>
-    </article>
+  <article class="card">
+    <p class="label">বৃষ্টিপাত</p>
+    <p class="value" id="rain">— মিমি</p>
+    <p class="hint">বর্তমান বৃষ্টিপাত</p>
+  </article>
 
-    <article class="card wide">
-      <h2 class="section-title">🌱 কৃষি পরামর্শ</h2>
-      <div class="empty">
-        আবহাওয়ার তথ্যের ভিত্তিতে কৃষি পরামর্শ দেখানোর ব্যবস্থা তৈরি করা হচ্ছে।
-      </div>
-    </article>
+  <article class="card">
+    <p class="label">আবহাওয়া কোড</p>
+    <p class="value" id="weatherCode">—</p>
+    <p class="hint">Open-Meteo weather code</p>
+  </article>
 
-    <article class="card wide">
-      <h2 class="section-title">🔔 আবহাওয়া সতর্কতা</h2>
-      <div class="empty">
-        নির্ভরযোগ্য সতর্কতা-উৎস যুক্ত না হওয়া পর্যন্ত এখানে কোনো সতর্কতা দেখানো হবে না।
-      </div>
-    </article>
+  <article class="card wide">
+    <h2 class="section-title">🌱 কৃষি পরামর্শ</h2>
+    <p class="hint">
+      লাইভ আবহাওয়ার তথ্য যুক্ত হয়েছে।
+      নির্ভরযোগ্য কৃষি নির্দেশনা যুক্ত করার কাজ
+      পরবর্তী ধাপে হবে।
+    </p>
+  </article>
 
-  </section>
+  <article class="card wide">
+    <h2 class="section-title">🔔 আবহাওয়া সতর্কতা</h2>
+    <p class="hint">
+      এখনো সরকারি সতর্কতা-উৎস যুক্ত হয়নি।
+      জরুরি সিদ্ধান্তের জন্য বাংলাদেশ আবহাওয়া
+      অধিদপ্তরের ঘোষণা অনুসরণ করুন।
+    </p>
+  </article>
+
+</section>
 </main>
 
 <footer class="container">
-  Weather BD Pro · সংস্করণ 0.1 · তথ্য যুক্ত করার কাজ চলমান
+  Weather BD Pro · সংস্করণ 0.2 · আবহাওয়ার তথ্য: Open-Meteo
 </footer>
 
 <script>
-const input = document.getElementById("districtSearch");
+const $ = id => document.getElementById(id);
 
-document.getElementById("searchBtn").addEventListener("click", () => {
-  const place = input.value.trim();
+function describeWeather(code) {
+  const map = {
+    0:["পরিষ্কার আকাশ","☀️"],
+    1:["প্রধানত পরিষ্কার","🌤️"],
+    2:["আংশিক মেঘলা","⛅"],
+    3:["মেঘলা","☁️"],
+    45:["কুয়াশা","🌫️"],
+    48:["জমাট কুয়াশা","🌫️"],
+    51:["হালকা গুঁড়ি গুঁড়ি বৃষ্টি","🌦️"],
+    53:["মাঝারি গুঁড়ি গুঁড়ি বৃষ্টি","🌦️"],
+    55:["ঘন গুঁড়ি গুঁড়ি বৃষ্টি","🌧️"],
+    61:["হালকা বৃষ্টি","🌧️"],
+    63:["মাঝারি বৃষ্টি","🌧️"],
+    65:["ভারী বৃষ্টি","🌧️"],
+    80:["বৃষ্টির ঝরনা","🌦️"],
+    81:["মাঝারি বৃষ্টির ঝরনা","🌧️"],
+    82:["প্রবল বৃষ্টির ঝরনা","⛈️"],
+    95:["বজ্রসহ ঝড়","⛈️"],
+    96:["শিলাবৃষ্টিসহ বজ্রঝড়","⛈️"],
+    99:["প্রবল শিলাবৃষ্টিসহ বজ্রঝড়","⛈️"]
+  };
 
-  if (place) {
-    document.getElementById("placeName").textContent = place;
+  return map[code] || ["পরিবর্তনশীল আবহাওয়া","🌥️"];
+}
+
+async function loadWeather() {
+  const status = $("status");
+
+  status.className = "status";
+  status.textContent = "ঢাকার লাইভ আবহাওয়ার তথ্য আনা হচ্ছে…";
+
+  $("refreshBtn").disabled = true;
+
+  const url =
+    "https://api.open-meteo.com/v1/forecast" +
+    "?latitude=23.8103" +
+    "&longitude=90.4125" +
+    "&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m" +
+    "&timezone=Asia%2FDhaka";
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(
+        "API থেকে তথ্য পাওয়া যায়নি (HTTP " +
+        response.status + ")"
+      );
+    }
+
+    const data = await response.json();
+
+    if (!data.current) {
+      throw new Error("আবহাওয়ার তথ্যের ফরম্যাট সঠিক নয়");
+    }
+
+    const c = data.current;
+
+    const [description, icon] =
+      describeWeather(c.weather_code);
+
+    $("temperature").textContent =
+      Number(c.temperature_2m).toFixed(1) + " °C";
+
+    $("feelsLike").textContent =
+      "অনুভূত তাপমাত্রা: " +
+      Number(c.apparent_temperature).toFixed(1) + " °C";
+
+    $("weatherText").textContent = description;
+    $("weatherIcon").textContent = icon;
+
+    $("humidity").textContent =
+      c.relative_humidity_2m + " %";
+
+    $("wind").textContent =
+      Number(c.wind_speed_10m).toFixed(1) +
+      " কিমি/ঘণ্টা";
+
+    $("rain").textContent =
+      Number(c.precipitation).toFixed(1) + " মিমি";
+
+    $("weatherCode").textContent = c.weather_code;
+
+    const time = c.time
+      ? new Date(c.time).toLocaleString("bn-BD", {
+          timeZone:"Asia/Dhaka"
+        })
+      : "—";
+
+    $("updatedAt").textContent =
+      "API সময়: " + time + " (বাংলাদেশ সময়)";
+
+    status.textContent =
+      "সফল! ঢাকার লাইভ আবহাওয়ার তথ্য পাওয়া গেছে।";
+
+  } catch (error) {
+    status.className = "status error";
+
+    status.textContent =
+      "তথ্য আনা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন। (" +
+      error.message + ")";
+  } finally {
+    $("refreshBtn").disabled = false;
   }
-});
+}
 
-input.addEventListener("keydown", event => {
-  if (event.key === "Enter") {
-    document.getElementById("searchBtn").click();
-  }
-});
+$("refreshBtn").addEventListener("click", loadWeather);
+
+loadWeather();
 </script>
 
 </body>
-</html>
+      </html>
