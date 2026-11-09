@@ -1,323 +1,500 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#087e4b">
-<meta name="description" content="বাংলাদেশের ৬৪ জেলার আবহাওয়া ও কৃষি তথ্য">
-<title>Weather BD | আবহাওয়া ও কৃষি</title>
+<meta name="theme-color" content="#075b39">
+<meta name="application-name" content="Weather BD Pro">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Weather BD Pro">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<meta name="description" content="Weather BD Pro — বাংলাদেশের আবহাওয়া, পূর্বাভাস ও ফসলভিত্তিক স্মার্ট কৃষি পরামর্শ।">
+<title>Weather BD Pro | আবহাওয়া ও স্মার্ট কৃষি</title>
+
 <style>
-:root{--green:#087e4b;--deep:#075c3b;--bg:#eef7f2;--card:#fff;--text:#173328;--muted:#64776e}
+:root{--green:#087e4b;--green2:#12a66a;--ink:#15352a;--muted:#668078;--bg:#f2f8f4;--card:#fff;--line:#e1eee6;--shadow:0 12px 34px #174b3210}
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,"Noto Sans Bengali",sans-serif;background:linear-gradient(160deg,#e5f5eb,#f5f8f6);color:var(--text)}
-header{background:linear-gradient(120deg,var(--deep),#0b9660);color:white;padding:24px 16px 30px;text-align:center}
-header h1{margin:0;font-size:27px}
-header p{margin:7px 0 0;opacity:.9}
-main{max-width:760px;margin:18px auto;padding:0 13px 35px}
-.card{background:var(--card);border-radius:18px;padding:17px;margin:13px 0;box-shadow:0 5px 20px #1233}
-.row{display:flex;gap:9px;flex-wrap:wrap}
-select,input,button{font:inherit;border-radius:11px;padding:12px;border:1px solid #d5e3da}
-select,input{background:#fff;color:var(--text);min-width:0;flex:1}
-button{background:var(--green);color:#fff;border:0;font-weight:650;cursor:pointer}
-button:active{transform:scale(.98)}
-.place{color:var(--muted);margin:0}
-.temp{font-size:58px;font-weight:750;line-height:1.2;margin:10px 0}
-.desc{font-size:18px;font-weight:650}
-.muted{color:var(--muted)}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:15px}
-.stat{background:#f0f7f3;border-radius:13px;padding:12px}
-.stat b{display:block;font-size:19px;margin-top:4px}
-.forecast{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;text-align:center}
-.day{background:#f0f7f3;padding:10px 4px;border-radius:12px;font-size:13px}
-.day b{display:block;margin:5px 0}
-.agri{border-left:5px solid #159447;background:#effaf1}
-.error{color:#b42318}
-.small{font-size:13px}
-@media(max-width:420px){
-.forecast{grid-template-columns:repeat(3,1fr)}
-.temp{font-size:50px}
-}
+body{margin:0;background:linear-gradient(180deg,#e6f5ec,#f5f9f6 520px);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif;background-attachment:fixed}
+body:before{content:"";position:fixed;inset:0;z-index:-2;background:linear-gradient(180deg,rgba(239,249,242,.82),rgba(247,251,248,.94)),url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2000&q=85") center/cover no-repeat}
+header{background:linear-gradient(105deg,rgba(3,53,34,.90),rgba(5,119,70,.76)),url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1800&q=85") center 45%/cover no-repeat}
+header{background:linear-gradient(120deg,#075b39,#0b9560);color:white;padding:22px 16px 30px;border-radius:0 0 28px 28px}
+.top{max-width:960px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font-weight:850;font-size:22px}.brand small{display:block;font-size:12px;font-weight:500;opacity:.85;margin-top:3px}
+.pill{border:1px solid #ffffff55;background:#ffffff18;color:white;padding:8px 11px;border-radius:20px;font-size:12px}
+main{max-width:960px;margin:-12px auto 30px;padding:0 14px}
+.searchbar{display:flex;gap:8px;background:white;padding:9px;border-radius:16px;box-shadow:var(--shadow)}
+input,button,select{font:inherit}input{min-width:0;border:1px solid var(--line);border-radius:11px;padding:12px;background:#fbfefc;color:var(--ink)}
+#place{flex:1}button{border:0;border-radius:11px;padding:11px 14px;background:var(--green);color:white;font-weight:700;cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}.secondary{background:#e9f5ee;color:var(--green)}
+.search-actions{display:flex;gap:8px}.status{font-size:12px;color:var(--muted);padding:10px 3px;min-height:32px}
+.grid{display:grid;grid-template-columns:1fr;gap:14px}
+.grid>section{display:contents}
+.grid>aside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:19px;padding:17px;box-shadow:var(--shadow);margin-bottom:14px}
+.card h2,.card h3{margin:0 0 12px}.card h2{font-size:17px}.card h3{font-size:15px}
+.current{background:linear-gradient(110deg,rgba(2,78,47,.94),rgba(14,153,92,.82)),url("https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1400&q=85") center/cover;color:white;border:0;min-height:205px;position:relative;overflow:hidden}
+.current:after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;background:#ffffff12;right:-45px;top:-50px}
+.place-name{font-size:14px;opacity:.9}.temp{font-size:58px;font-weight:800;line-height:1.15;margin:9px 0 2px}
+.condition{font-size:16px}.feels{font-size:12px;opacity:.82;margin-top:6px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:15px}
+.metric{background:#ffffff19;border:1px solid #ffffff25;border-radius:12px;padding:10px 7px;text-align:center}
+.metric b{display:block;font-size:16px}.metric span{font-size:11px;opacity:.85}
+.side-stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}.stat{padding:12px;background:#f4faf6;border-radius:13px}
+.stat span{display:block;color:var(--muted);font-size:11px}.stat b{font-size:16px}
+.forecast{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.day{background:#f5faf7;border-radius:13px;padding:11px 5px;text-align:center}
+.day strong{font-size:12px}.day .ico{font-size:23px;margin:7px 0}
+.day small{display:block;color:var(--muted);font-size:11px}.day b{font-size:13px}
+.agri{background:linear-gradient(145deg,rgba(226,247,231,.97),rgba(249,255,250,.96));border:1px solid #b9e3c5;padding:clamp(20px,3vw,32px);box-shadow:0 18px 45px #145b3018}
+.agri h2{font-size:clamp(20px,2.4vw,27px)!important}.agri>p{font-size:14px;line-height:1.7}.agri .advice{padding:16px 18px;font-size:14px;line-height:1.85;border-radius:14px;box-shadow:0 4px 14px #174b3208}.agri label{display:block;margin-top:10px}.agri select{min-height:48px;font-size:15px}
+.agri select{width:100%;padding:12px;margin:8px 0 14px;border:1px solid #ccebd3;border-radius:11px;background:white;color:var(--ink);outline:none}
+.agri select:focus{border-color:var(--green);box-shadow:0 0 0 3px #087e4b18}
+.advice{padding:12px;border-left:4px solid #16a05d;background:white;border-radius:11px;margin:9px 0;font-size:13px;line-height:1.7}
+.advice b{color:#087e4b}.tag{display:inline-block;padding:3px 8px;margin-bottom:5px;border-radius:20px;background:#e7f6eb;color:#087e4b;font-size:11px;font-weight:700}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.muted{color:var(--muted);font-size:12px}.foot{text-align:center;color:var(--muted);font-size:11px;padding:12px 5px 28px}
+.error{color:#a33;background:#fff2f0;border:1px solid #ffd7d1;border-radius:12px;padding:11px;font-size:13px}
+.warning{border-left-color:#d99a20;background:#fffdf5}.danger{border-left-color:#d9534f}
+@media(max-width:680px){.grid{grid-template-columns:1fr}.grid>aside{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(4,1fr)}.searchbar{flex-direction:column}.search-actions button{flex:1}.forecast{gap:5px}.day{padding:9px 2px}.temp{font-size:52px}}
+@media(max-width:380px){.metrics{grid-template-columns:repeat(2,1fr)}.forecast{grid-template-columns:repeat(5,minmax(0,1fr))}.day strong,.day small{font-size:10px}}
 </style>
 </head>
-<body>
 
-<header>
-<h1>🌤️ Weather BD</h1>
-<p>বাংলাদেশের আবহাওয়া ও কৃষি তথ্য এক জায়গায়</p>
-</header>
+<body>
+<header><div class="top"><div class="brand">🌦️ Weather BD Pro<small>বাংলাদেশের আবহাওয়া ও স্মার্ট কৃষি তথ্য</small></div><span class="pill">বাংলাদেশ 🇧🇩</span></div></header>
 
 <main>
-
-<section class="card">
-<h3 style="margin-top:0">📍 জেলা নির্বাচন করুন</h3>
-<div class="row">
-<select id="district" aria-label="জেলা নির্বাচন"></select>
-<button id="loadBtn">আবহাওয়া দেখুন</button>
-</div>
-<p class="small muted">জেলা পরিবর্তন করলে নির্বাচিত জেলার তথ্য লোড হবে।</p>
-</section>
-
-<section class="card" aria-live="polite">
-<p class="place" id="place">ঢাকা, বাংলাদেশ</p>
-<div class="temp" id="temp">--°C</div>
-<div class="desc" id="description">তথ্য লোড হচ্ছে...</div>
-
-<div class="grid">
-<div class="stat">অনুভূত তাপমাত্রা<b id="feels">--°C</b></div>
-<div class="stat">আর্দ্রতা<b id="humidity">--%</b></div>
-<div class="stat">বাতাসের গতি<b id="wind">-- km/h</b></div>
-<div class="stat">বৃষ্টিপাত<b id="rain">-- mm</b></div>
-<div class="stat">UV সূচক<b id="uv">--</b></div>
-<div class="stat">আজকের সর্বোচ্চ / সর্বনিম্ন<b id="minmax">-- / --°C</b></div>
+<div class="searchbar">
+<input id="place" list="districts" placeholder="শহর বা জেলার নাম লিখুন..." aria-label="শহর বা জেলার নাম">
+<datalist id="districts"></datalist>
+<div class="search-actions"><button id="searchBtn">খুঁজুন</button><button class="secondary" id="locBtn">আমার অবস্থান</button></div>
 </div>
 
-<p class="small muted" id="updated">ডেটা Open-Meteo থেকে নেওয়া হচ্ছে।</p>
-</section>
+<div class="status" id="status" role="status">আবহাওয়ার তথ্য পেতে জেলা নির্বাচন করুন অথবা আপনার অবস্থান ব্যবহার করুন।</div>
 
-<section class="card">
-<h3 style="margin-top:0">📅 আগামী ৫ দিনের পূর্বাভাস</h3>
-<div class="forecast" id="forecast">
-<div class="muted">লোড হচ্ছে...</div>
+<div class="grid"><section>
+<div class="card current">
+<div class="place-name" id="currentPlace">বাংলাদেশ</div><div class="temp" id="temperature">--°</div>
+<div class="condition" id="condition">আবহাওয়ার তথ্য লোড করুন</div><div class="feels" id="feels">অনুভূত তাপমাত্রা: --</div>
+<div class="metrics">
+<div class="metric"><b id="humidity">--%</b><span>আর্দ্রতা</span></div>
+<div class="metric"><b id="wind">--</b><span>বাতাস (কিমি/ঘণ্টা)</span></div>
+<div class="metric"><b id="rain">--</b><span>বৃষ্টি (মিমি)</span></div>
+<div class="metric"><b id="uv">--</b><span>UV সূচক</span></div>
+</div></div>
+
+<div class="card"><div class="row"><h2>📅 আগামী ৫ দিনের পূর্বাভাস</h2><span class="muted">প্রতিদিন</span></div><div class="forecast" id="forecast"><div class="muted">তথ্য লোড হলে এখানে দেখা যাবে।</div></div></div>
+
+<div class="card agri">
+<div class="row"><h2>🌱 Smart Agriculture Advisory</h2><span class="pill" style="background:#087e4b;color:white">PRO</span></div>
+<p class="muted">ফসল ও বৃদ্ধির পর্যায় নির্বাচন করে আবহাওয়াভিত্তিক কৃষি পরামর্শ পান।</p>
+<label for="cropSelect"><b>🌾 আপনার ফসল নির্বাচন করুন</b></label>
+<select id="cropSelect">
+<option value="rice">ধান</option><option value="wheat">গম</option><option value="maize">ভুট্টা</option><option value="potato">আলু</option><option value="tomato">টমেটো</option><option value="eggplant">বেগুন</option><option value="chili">মরিচ</option><option value="jute">পাট</option><option value="mango">আম</option><option value="vegetable">অন্যান্য সবজি</option>
+</select>
+
+<label for="stageSelect"><b>🌿 ফসলের বর্তমান পর্যায়</b></label>
+<select id="stageSelect">
+<option value="seed">বীজতলা / চারা</option><option value="growth">গাছের বৃদ্ধি</option><option value="flower">ফুল / শীষ / ফল ধারণ</option><option value="mature">পাকা / সংগ্রহের পর্যায়</option>
+</select>
+
+<div class="row"><b>📋 আবহাওয়াভিত্তিক করণীয়</b><span class="muted" id="adviceTime">লাইভ তথ্য</span></div>
+<div id="advice"><div class="advice">আবহাওয়ার তথ্য লোড হলে পরামর্শ দেখানো হবে।</div></div>
+<div class="advice warning"><b>⚠️ কৃষি সতর্কতা:</b> আবহাওয়ার তথ্য ঝুঁকির ইঙ্গিত দিতে পারে, কিন্তু শুধু আবহাওয়া দেখে রোগ নিশ্চিত করা যায় না। রোগ বা পোকা দেখা গেলে ছবি/নমুনাসহ স্থানীয় কৃষি কর্মকর্তা বা কৃষি সম্প্রসারণ অধিদপ্তরের পরামর্শ নিন। সার বা বালাইনাশকের মাত্রা অনুমান করে ব্যবহার করবেন না।</div>
 </div>
 </section>
 
-<section class="card agri">
-<h3 style="margin-top:0;color:#087e4b">🌱 কৃষি আবহাওয়া পরামর্শ</h3>
-<p id="advice">আবহাওয়ার তথ্য পাওয়ার পর পরামর্শ দেখানো হবে।</p>
-<p class="small muted">সাধারণ পরামর্শ—স্থানীয় কৃষি কর্মকর্তার নির্দেশনাকে অগ্রাধিকার দিন।</p>
-</section>
+<aside>
+<div class="card"><h2>🌤️ আবহাওয়ার বিস্তারিত</h2><div class="side-stats">
+<div class="stat"><span>সর্বোচ্চ তাপমাত্রা</span><b id="max">--°C</b></div><div class="stat"><span>সর্বনিম্ন তাপমাত্রা</span><b id="min">--°C</b></div>
+<div class="stat"><span>বৃষ্টির সম্ভাবনা</span><b id="rainChance">--%</b></div><div class="stat"><span>বাতাসের দিক</span><b id="windDir">--</b></div>
+<div class="stat"><span>সূর্যোদয়</span><b id="sunrise">--</b></div><div class="stat"><span>সূর্যাস্ত</span><b id="sunset">--</b></div>
+</div></div>
 
-<p class="small muted" id="status" role="status"></p>
+<div class="card"><h3>🔔 আবহাওয়া সতর্কতা</h3><p class="muted">এই সংস্করণে লাইভ পূর্বাভাস দেখা যাবে। স্বয়ংক্রিয় Push Alert চালু করতে HTTPS, Service Worker ও আলাদা Push সেটআপ প্রয়োজন।</p>
+<button class="secondary" id="notifyBtn" style="width:100%">নোটিফিকেশন অনুমতি</button><p class="muted" id="notifyStatus">ব্রাউজার অনুমতি সমর্থিত হলে অনুরোধ করা যাবে।</p></div>
 
+<div class="card"><h3>📲 অ্যাপ ব্যবহার</h3><p class="muted">HTTPS-এ প্রকাশিত Weather BD Pro আপনার ফোনে অ্যাপের মতো ইনস্টল করা যাবে। Chrome-এ সরাসরি ইনস্টল অথবা ব্রাউজারের মেনু থেকে Add to Home screen ব্যবহার করুন।</p><button id="installBtn" style="width:100%">📲 অ্যাপ ইনস্টল করুন</button></div>
+
+<div class="card"><h3>ℹ️ তথ্যের উৎস</h3><p class="muted">আবহাওয়া: Open-Meteo API · স্থান খোঁজা: Open-Meteo Geocoding</p><p class="muted" id="updated">সর্বশেষ আপডেট: --</p></div>
+</aside></div>
+
+<div class="foot">Weather BD Pro · বাংলাদেশের আবহাওয়া ও কৃষি তথ্য<br>তথ্য ইন্টারনেট সংযোগ ও উৎস API-এর প্রাপ্যতার ওপর নির্ভরশীল।</div>
 </main>
 
 <script>
+  "use strict";
+const $=id=>document.getElementById(id);
 
-const districts = {
-
-"ঢাকা":[23.8103,90.4125],
-"গাজীপুর":[24.0023,90.4264],
-"নারায়ণগঞ্জ":[23.6238,90.5000],
-"নরসিংদী":[23.9322,90.7151],
-"মুন্সীগঞ্জ":[23.5422,90.5305],
-"মানিকগঞ্জ":[23.8617,90.0003],
-"টাঙ্গাইল":[24.2513,89.9167],
-"কিশোরগঞ্জ":[24.4260,90.9821],
-"ফরিদপুর":[23.6071,89.8429],
-"গোপালগঞ্জ":[23.0051,89.8266],
-"মাদারীপুর":[23.1641,90.1897],
-"রাজবাড়ী":[23.7574,89.6445],
-"শরীয়তপুর":[23.2423,90.4348],
-
-"চট্টগ্রাম":[22.3569,91.7832],
-"কক্সবাজার":[21.4272,92.0058],
-"কুমিল্লা":[23.4607,91.1809],
-"ব্রাহ্মণবাড়িয়া":[23.9571,91.1119],
-"চাঁদপুর":[23.2333,90.6712],
-"ফেনী":[23.0159,91.3976],
-"লক্ষ্মীপুর":[22.9447,90.8282],
-"নোয়াখালী":[22.8696,91.0995],
-"খাগড়াছড়ি":[23.1193,91.9847],
-"রাঙামাটি":[22.7324,92.2985],
-"বান্দরবান":[22.1953,92.2184],
-
-"রাজশাহী":[24.3745,88.6042],
-"বগুড়া":[24.8465,89.3770],
-"জয়পুরহাট":[25.0968,89.0227],
-"নওগাঁ":[24.7936,88.9318],
-"নাটোর":[24.4206,89.0000],
-"চাঁপাইনবাবগঞ্জ":[24.7413,88.2912],
-"পাবনা":[24.0064,89.2372],
-"সিরাজগঞ্জ":[24.4534,89.7007],
-
-"রংপুর":[25.7439,89.2752],
-"দিনাজপুর":[25.6279,88.6332],
-"গাইবান্ধা":[25.3288,89.5281],
-"কুড়িগ্রাম":[25.8054,89.6362],
-"লালমনিরহাট":[25.9165,89.4542],
-"নীলফামারী":[25.9318,88.8560],
-"পঞ্চগড়":[26.3411,88.5542],
-"ঠাকুরগাঁও":[26.0336,88.4617],
-
-"খুলনা":[22.8456,89.5403],
-"যশোর":[23.1664,89.2081],
-"বাগেরহাট":[22.6516,89.7859],
-"চুয়াডাঙ্গা":[23.6402,88.8418],
-"ঝিনাইদহ":[23.5448,89.1539],
-"কুষ্টিয়া":[23.9013,89.1205],
-"মাগুরা":[23.4873,89.4199],
-"মেহেরপুর":[23.7622,88.6318],
-"নড়াইল":[23.1725,89.5127],
-"সাতক্ষীরা":[22.7185,89.0705],
-
-"বরিশাল":[22.7010,90.3535],
-"বরগুনা":[22.1592,90.1256],
-"ভোলা":[22.6859,90.6482],
-"ঝালকাঠি":[22.6406,90.1987],
-"পটুয়াখালী":[22.3596,90.3299],
-"পিরোজপুর":[22.5841,89.9720],
-
-"সিলেট":[24.8949,91.8687],
-"মৌলভীবাজার":[24.4829,91.7774],
-"হবিগঞ্জ":[24.3749,91.4155],
-"সুনামগঞ্জ":[25.0658,91.3950],
-
-"ময়মনসিংহ":[24.7471,90.4203],
-"জামালপুর":[24.9375,89.9378],
-"নেত্রকোনা":[24.8709,90.7278],
-"শেরপুর":[25.0205,90.0153]
-
+const districts={
+"ঢাকা":[23.8103,90.4125],"দিনাজপুর":[25.6279,88.6332],"রংপুর":[25.7439,89.2752],"রাজশাহী":[24.3745,88.6042],"চট্টগ্রাম":[22.3569,91.7832],"সিলেট":[24.8949,91.8687],"খুলনা":[22.8456,89.5403],"বরিশাল":[22.7010,90.3535],"ময়মনসিংহ":[24.7471,90.4203],"কুমিল্লা":[23.4607,91.1809],"বগুড়া":[24.8465,89.3773],"যশোর":[23.1664,89.2081],"পাবনা":[24.0064,89.2372],"কুষ্টিয়া":[23.9013,89.1205],"ফেনী":[23.0159,91.3976],"কক্সবাজার":[21.4272,92.0058],"গাজীপুর":[24.0023,90.4264],"নারায়ণগঞ্জ":[23.6238,90.5000],"টাঙ্গাইল":[24.2513,89.9167],"নোয়াখালী":[22.8696,91.0995],"সাভার":[23.8583,90.2667]
 };
 
-const $ = id => document.getElementById(id);
-const select = $("district");
-
-Object.keys(districts)
-.sort((a,b)=>a.localeCompare(b,"bn"))
-.forEach(name=>{
-const option=document.createElement("option");
-option.value=name;
-option.textContent=name;
-select.appendChild(option);
+Object.keys(districts).forEach(n=>{
+const o=document.createElement("option");
+o.value=n;
+$("districts").appendChild(o);
 });
 
-select.value="ঢাকা";
-
-const weatherText={
-0:"পরিষ্কার আকাশ",
-1:"প্রায় পরিষ্কার",
-2:"আংশিক মেঘলা",
-3:"মেঘলা",
-45:"কুয়াশা",
-48:"ঘন কুয়াশা",
-51:"হালকা গুঁড়ি গুঁড়ি বৃষ্টি",
-53:"গুঁড়ি গুঁড়ি বৃষ্টি",
-55:"ঘন গুঁড়ি গুঁড়ি বৃষ্টি",
-61:"হালকা বৃষ্টি",
-63:"মাঝারি বৃষ্টি",
-65:"ভারী বৃষ্টি",
-71:"হালকা তুষারপাত",
-80:"বিক্ষিপ্ত বৃষ্টি",
-81:"বৃষ্টি",
-82:"ভারী বৃষ্টি",
-95:"বজ্রসহ বৃষ্টি"
+const weatherCodes={
+0:["পরিষ্কার আকাশ","☀️"],1:["প্রধানত পরিষ্কার","🌤️"],2:["আংশিক মেঘলা","⛅"],3:["মেঘাচ্ছন্ন","☁️"],45:["কুয়াশা","🌫️"],48:["ঘন কুয়াশা","🌫️"],51:["হালকা গুঁড়ি গুঁড়ি বৃষ্টি","🌦️"],53:["মাঝারি গুঁড়ি বৃষ্টি","🌦️"],55:["ঘন গুঁড়ি বৃষ্টি","🌧️"],61:["হালকা বৃষ্টি","🌦️"],63:["মাঝারি বৃষ্টি","🌧️"],65:["ভারী বৃষ্টি","🌧️"],71:["হালকা তুষারপাত","❄️"],73:["মাঝারি তুষারপাত","❄️"],75:["ভারী তুষারপাত","❄️"],80:["বিক্ষিপ্ত বৃষ্টি","🌦️"],81:["মাঝারি বৃষ্টির ঝাপটা","🌧️"],82:["প্রবল বৃষ্টির ঝাপটা","⛈️"],95:["বজ্রসহ বৃষ্টি","⛈️"],96:["শিলাসহ বজ্রঝড়","⛈️"],99:["প্রবল শিলাসহ বজ্রঝড়","⛈️"]
 };
 
-function adviceFor(t,r,w,code){
+function wx(code){return weatherCodes[code]||["পরিবর্তনশীল আবহাওয়া","🌤️"]}
+function time(v){return v?new Date(v).toLocaleTimeString("bn-BD",{hour:"2-digit",minute:"2-digit"}):"--"}
+function day(v){return new Date(v+"T12:00:00").toLocaleDateString("bn-BD",{weekday:"short"})}
+function setStatus(msg,error=false){$("status").textContent=msg;$("status").className=error?"status error":"status"}
 
-let a=[];
+const cropInfo={
+rice:{name:"ধান",seed:"বীজতলা ও চারার পানি এবং নিষ্কাশন পর্যবেক্ষণ করুন।",growth:"জমির পানির অবস্থা দেখুন। অতিরিক্ত পানি জমলে নিষ্কাশনের ব্যবস্থা রাখুন।",flower:"শীষ বের হওয়া ও ফুলের সময় জমির আর্দ্রতা বজায় রাখুন।",mature:"ধান পাকার সময় বৃষ্টি হলে সংগ্রহ ও শুকানোর পরিকল্পনা করুন।"},
+wheat:{name:"গম",seed:"বীজতলায় অতিরিক্ত পানি জমতে দেবেন না।",growth:"মাটির আর্দ্রতা পর্যবেক্ষণ করুন এবং প্রয়োজন অনুযায়ী সেচের পরিকল্পনা করুন।",flower:"ফুল ও দানা গঠনের সময় অতিরিক্ত তাপের দিকে নজর রাখুন।",mature:"বৃষ্টি আসার সম্ভাবনা থাকলে পাকা ফসল সংগ্রহের পরিকল্পনা করুন।"},
+maize:{name:"ভুট্টা",seed:"চারা ও জমির পানি নিষ্কাশনের দিকে নজর রাখুন।",growth:"গাছের গোড়ার মাটির আর্দ্রতা এবং পানি জমার অবস্থা দেখুন।",flower:"মোচা ও দানা গঠনের সময় পানির ঘাটতি যেন না হয় সেদিকে খেয়াল রাখুন।",mature:"দানা পরিপক্ব হলে আবহাওয়া দেখে সংগ্রহ ও শুকানোর ব্যবস্থা করুন।"},
+potato:{name:"আলু",seed:"বীজ ও জমিতে অতিরিক্ত আর্দ্রতা জমছে কি না দেখুন।",growth:"গোড়ায় পানি জমতে দেবেন না। গাছের পাতা ও কাণ্ড নিয়মিত পর্যবেক্ষণ করুন।",flower:"পাতায় দাগ বা অস্বাভাবিক পরিবর্তন আছে কি না দেখুন।",mature:"মাটি ও আবহাওয়ার অবস্থা উপযুক্ত হলে সংগ্রহের পরিকল্পনা করুন।"},
+tomato:{name:"টমেটো",seed:"চারা পর্যায়ে পানি জমতে দেবেন না এবং গাছ পর্যবেক্ষণ করুন।",growth:"গাছের গোড়ায় পানি জমা ও পাতার অতিরিক্ত ভেজাভাব এড়ানোর চেষ্টা করুন।",flower:"ফুল ও ফল ধারণের সময় মাটির আর্দ্রতা নিয়মিত পর্যবেক্ষণ করুন।",mature:"ফল সংগ্রহের আগে বৃষ্টি ও আবহাওয়ার পূর্বাভাস দেখুন।"},
+eggplant:{name:"বেগুন",seed:"চারা সুস্থ আছে কি না এবং জমিতে পানি জমছে কি না দেখুন।",growth:"পাতা ও কাণ্ডে পোকার উপস্থিতি নিয়মিত পরীক্ষা করুন।",flower:"ফুল ও ফলের সময় গাছের পানি ও পুষ্টির অবস্থা পর্যবেক্ষণ করুন।",mature:"পাকা ফল নিয়মিত সংগ্রহ করুন এবং ক্ষতিগ্রস্ত ফল আলাদা রাখুন।"},
+chili:{name:"মরিচ",seed:"চারা পর্যায়ে অতিরিক্ত পানি ও জলাবদ্ধতা এড়ান।",growth:"পাতার নিচের অংশ ও কাণ্ডে অস্বাভাবিক পরিবর্তন পর্যবেক্ষণ করুন।",flower:"ফুল ও ফল ধারণের সময় মাটির আর্দ্রতা নিয়মিত দেখুন।",mature:"ফল পাকার সময় বৃষ্টি ও আর্দ্রতার অবস্থা দেখে সংগ্রহ করুন।"},
+jute:{name:"পাট",seed:"বীজ অঙ্কুরোদগমের সময় জমির আর্দ্রতা পর্যবেক্ষণ করুন।",growth:"গাছের বৃদ্ধি ও জমির পানি নিষ্কাশন পর্যবেক্ষণ করুন।",flower:"গাছের পরিপক্বতা ও আবহাওয়ার অবস্থা বিবেচনা করুন।",mature:"পাট কাটার ও পচানোর উপযুক্ত সময় স্থানীয় কৃষি পরামর্শ অনুযায়ী নির্ধারণ করুন।"},
+mango:{name:"আম",seed:"নতুন চারা ও গোড়ার মাটির আর্দ্রতা পর্যবেক্ষণ করুন।",growth:"গাছের গোড়ায় পানি জমতে দেবেন না এবং বাগান পরিষ্কার রাখুন।",flower:"মুকুল ও ফল ধারণের সময় বৃষ্টি, আর্দ্রতা এবং রোগের লক্ষণ পর্যবেক্ষণ করুন।",mature:"ফল পরিপক্বতার লক্ষণ দেখে সংগ্রহের পরিকল্পনা করুন।"},
+vegetable:{name:"অন্যান্য সবজি",seed:"চারা ও বীজতলায় পানি জমতে দেবেন না।",growth:"পাতা, কাণ্ড ও গোড়ার অবস্থা নিয়মিত পরীক্ষা করুন।",flower:"ফুল ও ফল ধারণের সময় মাটির আর্দ্রতা বজায় রাখুন।",mature:"ফসল সংগ্রহের আগে বৃষ্টি ও আবহাওয়ার অবস্থা যাচাই করুন।"}
+};
 
-if(r>=5||[61,63,65,80,81,82,95].includes(code))
-a.push("বৃষ্টি বা বজ্রবৃষ্টির সম্ভাবনা থাকলে সেচ সাময়িকভাবে বন্ধ রাখুন এবং জমির পানি নিষ্কাশনের ব্যবস্থা রাখুন।");
+function makeAdvice(c,d){
+const crop=$("cropSelect").value,stage=$("stageSelect").value,info=cropInfo[crop]||cropInfo.vegetable;
+const rain=d.precipitation_probability_max[0]??0,temp=c.temperature_2m,humidity=c.relative_humidity_2m,wind=c.wind_speed_10m,code=c.weather_code,uv=d.uv_index_max[0]??0;
+let items=[];
 
-else if(t>=33)
-a.push("গরম বেশি—সকালে বা বিকেলে সেচ দিন; দুপুরের তীব্র রোদে জমিতে কাজ কমান।");
-
-else
-a.push("মাটির আর্দ্রতা দেখে প্রয়োজনমতো সেচ দিন; অপ্রয়োজনীয় পানি ব্যবহার করবেন না।");
-
-if(w>=25)
-a.push("বাতাস বেশি হলে কলাগাছ, সবজি ও লম্বা ফসলের গাছের খুঁটি/সমর্থন পরীক্ষা করুন।");
-
-if(!a.length)
-a.push("ফসল নিয়মিত পর্যবেক্ষণ করুন এবং জমির অবস্থা অনুযায়ী পরিচর্যা করুন।");
-
-return a.join(" ");
-
+function add(title,description,tag="পরামর্শ",kind=""){
+items.push({title,description,tag,kind});
 }
 
-function fmtDate(s){
-return new Date(s+"T12:00:00").toLocaleDateString("bn-BD",{weekday:"short"});
+add(info.name+" — "+$("stageSelect").selectedOptions[0].textContent,info[stage],"ফসলভিত্তিক");
+
+if(rain>=70||c.precipitation>=5)
+add("বৃষ্টি ও জলাবদ্ধতার ঝুঁকি","সেচ দেওয়ার আগে পূর্বাভাস যাচাই করুন। জমির পানি নিষ্কাশনের পথ পরিষ্কার রাখুন।","উচ্চ সতর্কতা","warning");
+else if(rain>=40)
+add("বৃষ্টির সম্ভাবনা","আগামী সময়ে বৃষ্টি হতে পারে। সেচ ও মাঠের কাজ করার আগে স্থানীয় পরিস্থিতি যাচাই করুন।","সতর্কতা","warning");
+else if(rain<=20)
+add("কম বৃষ্টির সম্ভাবনা","মাটির আর্দ্রতা পরীক্ষা করে প্রয়োজন অনুযায়ী সেচ দিন।","পানি ব্যবস্থাপনা");
+
+if(temp>=35)
+add("অতিরিক্ত গরম","সংবেদনশীল গাছ ও চারার অবস্থা পর্যবেক্ষণ করুন। মাঠের কাজ সকাল বা বিকেলে করুন। মাটির আর্দ্রতা যাচাই করুন।","তাপ সতর্কতা","warning");
+else if(temp<=12)
+add("কম তাপমাত্রা","সংবেদনশীল চারা ও গাছ পর্যবেক্ষণ করুন। ফসলের ধরন অনুযায়ী স্থানীয় কৃষি পরামর্শ নিন।","তাপমাত্রা");
+
+if(humidity>=85&&temp>=20&&temp<=32)
+add("ছত্রাকজনিত রোগের অনুকূল হতে পারে","পাতায় দাগ, পচন বা অস্বাভাবিক পরিবর্তন আছে কি না পরীক্ষা করুন। এটি রোগ নিশ্চিত হওয়ার প্রমাণ নয়।","রোগ পর্যবেক্ষণ","warning");
+
+if(wind>=30)
+add("জোরালো বাতাস","দুর্বল গাছ ও অস্থায়ী কাঠামো নিরাপদ রাখুন। বাতাস বেশি থাকলে স্প্রে করা এড়িয়ে চলুন।","সতর্কতা","warning");
+
+if([95,96,99,82].includes(code))
+add("বজ্রঝড়ের সতর্কতা","খোলা মাঠে কাজ বন্ধ রেখে নিরাপদ আশ্রয়ে যান। বজ্রপাতের সময় গাছের নিচে আশ্রয় নেবেন না।","জরুরি সতর্কতা","danger");
+
+if(uv>=8)
+add("উচ্চ UV সূচক","দুপুরের তীব্র রোদে মাঠের কাজ সীমিত রাখুন। প্রয়োজনে সকাল বা বিকেলে কাজ করুন।","স্বাস্থ্য ও মাঠের কাজ");
+
+if(rain>=50||wind>=20)
+add("স্প্রে করার আগে সতর্কতা","বৃষ্টি বা বাতাসের সময় স্প্রে করলে কার্যকারিতা কমতে পারে এবং অন্যত্র ছড়িয়ে যেতে পারে। পণ্যের লেবেল ও স্থানীয় কৃষি কর্মকর্তার নির্দেশনা অনুসরণ করুন।","কৃষি নিরাপত্তা","warning");
+
+add("আজকের করণীয়","জমি পরিদর্শন করুন, মাটির আর্দ্রতা দেখুন এবং ফসলের পাতা ও গোড়ার পরিবর্তন লক্ষ্য করুন।","দৈনিক কাজ");
+
+$("advice").innerHTML=items.map(x=>`<div class="advice ${x.kind}"><span class="tag">${x.tag}</span><br><b>${x.title}:</b> ${x.description}</div>`).join("");
+
+$("adviceTime").textContent="আপডেট: "+new Date().toLocaleTimeString("bn-BD",{hour:"2-digit",minute:"2-digit"});
 }
 
-async function loadWeather(){
+window.latestWeather=null;
 
-const name=select.value;
-const [lat,lon]=districts[name];
+const WEATHER_CACHE_MS=5*60*1000;
+let weatherController=null,activeWeatherRequest=0;
+const weatherCache=new Map();
 
-$("place").textContent=name+", বাংলাদেশ";
-$("description").textContent="তথ্য লোড হচ্ছে...";
-$("status").textContent="";
-$("loadBtn").disabled=true;
+function renderWeather(d,name){
+const c=d.current,dy=d.daily,w=wx(c.weather_code);
+
+if(!c||!dy||!Array.isArray(dy.time)||!dy.time.length)
+throw new Error("সার্ভার থেকে অসম্পূর্ণ আবহাওয়ার তথ্য এসেছে।");
+
+$("currentPlace").textContent=name;
+$("temperature").textContent=Math.round(c.temperature_2m)+"°C";
+$("condition").textContent=w[1]+" "+w[0];
+$("feels").textContent="অনুভূত তাপমাত্রা: "+Math.round(c.apparent_temperature)+"°C";
+
+$("humidity").textContent=c.relative_humidity_2m+"%";
+$("wind").textContent=Math.round(c.wind_speed_10m);
+$("rain").textContent=Number(c.precipitation).toFixed(1);
+$("uv").textContent=dy.uv_index_max?.[0]??"--";
+
+$("max").textContent=Math.round(dy.temperature_2m_max[0])+"°C";
+$("min").textContent=Math.round(dy.temperature_2m_min[0])+"°C";
+$("rainChance").textContent=(dy.precipitation_probability_max?.[0]??"--")+"%";
+$("windDir").textContent=Math.round(c.wind_direction_10m)+"°";
+
+$("sunrise").textContent=time(dy.sunrise?.[0]);
+$("sunset").textContent=time(dy.sunset?.[0]);
+
+$("forecast").innerHTML=dy.time.map((date,i)=>{
+const z=wx(dy.weather_code[i]);
+return `<div class="day">
+<strong>${i===0?"আজ":day(date)}</strong>
+<div class="ico">${z[1]}</div>
+<small>${z[0]}</small>
+<b>${Math.round(dy.temperature_2m_max[i])}°</b>
+<small>${Math.round(dy.temperature_2m_min[i])}°</small>
+<small>বৃষ্টি ${dy.precipitation_probability_max?.[i]??0}%</small>
+</div>`;
+}).join("");
+
+window.latestWeather={current:c,daily:dy};
+makeAdvice(c,dy);
+
+$("updated").textContent="সর্বশেষ আপডেট: "+new Date().toLocaleString("bn-BD");
+}
+
+async function loadWeather(lat,lon,name){
+
+if(weatherController)weatherController.abort();
+
+const controller=new AbortController();
+weatherController=controller;
+
+const requestId=++activeWeatherRequest;
+const cacheKey=Number(lat).toFixed(3)+","+Number(lon).toFixed(3);
+
+const cached=weatherCache.get(cacheKey);
+
+if(cached&&Date.now()-cached.savedAt<WEATHER_CACHE_MS){
+try{
+renderWeather(cached.data,name);
+setStatus("৫ মিনিটের মধ্যে সংরক্ষিত তথ্য দেখানো হয়েছে।");
+$("searchBtn").disabled=false;
+$("locBtn").disabled=false;
+return;
+}catch(e){
+weatherCache.delete(cacheKey);
+}
+}
+
+$("searchBtn").disabled=true;
+$("locBtn").disabled=true;
+setStatus("আবহাওয়ার তথ্য আনা হচ্ছে...");
+
+const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max,sunrise,sunset&timezone=auto&forecast_days=5`;
+
+const timer=setTimeout(()=>controller.abort(),12000);
 
 try{
+const r=await fetch(url,{signal:controller.signal});
 
-const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=Asia%2FDhaka&forecast_days=5`;
+if(!r.ok)
+throw new Error("আবহাওয়ার সার্ভার থেকে তথ্য পাওয়া যায়নি (HTTP "+r.status+")।");
 
-const response=await fetch(url);
+const d=await r.json();
 
-if(!response.ok)
-throw new Error("API response "+response.status);
+if(requestId!==activeWeatherRequest)return;
 
-const data=await response.json();
-const c=data.current;
-const d=data.daily;
+renderWeather(d,name);
 
-$("temp").textContent=Math.round(c.temperature_2m)+"°C";
+weatherCache.set(cacheKey,{
+data:d,
+savedAt:Date.now()
+});
 
-$("description").textContent=
-weatherText[c.weather_code]||"আবহাওয়ার অবস্থা";
+try{
+localStorage.setItem("weatherBDLastSnapshot",
+JSON.stringify({
+name,
+data:d,
+savedAt:Date.now()
+}));
+}catch(e){}
 
-$("feels").textContent=
-Math.round(c.apparent_temperature)+"°C";
+setStatus("তথ্য সফলভাবে আপডেট হয়েছে। উৎস: Open-Meteo");
 
-$("humidity").textContent=
-c.relative_humidity_2m+"%";
+}catch(e){
 
-$("wind").textContent=
-c.wind_speed_10m+" km/h";
+if(requestId!==activeWeatherRequest)return;
 
-$("rain").textContent=
-c.precipitation+" mm";
-
-$("uv").textContent=
-d.uv_index_max[0]??"--";
-
-$("minmax").textContent=
-Math.round(d.temperature_2m_max[0])+"° / "+
-Math.round(d.temperature_2m_min[0])+"°C";
-
-$("forecast").innerHTML=d.time.map((date,i)=>`
-<div class="day">
-${fmtDate(date)}
-<b>${weatherText[d.weather_code[i]]||"আবহাওয়া"}</b>
-${Math.round(d.temperature_2m_max[i])}° /
-${Math.round(d.temperature_2m_min[i])}°C
-<br>
-<span class="muted">
-বৃষ্টি ${d.precipitation_probability_max[i]??0}%
-</span>
-</div>
-`).join("");
-
-$("advice").textContent=
-adviceFor(c.temperature_2m,c.precipitation,c.wind_speed_10m,c.weather_code);
-
-$("updated").textContent=
-"সর্বশেষ আপডেট: "+
-new Date().toLocaleTimeString("bn-BD",{hour:"numeric",minute:"2-digit"});
-
-}catch(err){
-
-$("description").textContent="আবহাওয়ার তথ্য পাওয়া যায়নি";
-
-$("status").innerHTML=
-'<span class="error">ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।</span>';
-
-console.error(err);
+if(e.name==="AbortError")
+setStatus("১২ সেকেন্ডে সার্ভারের উত্তর আসেনি। ইন্টারনেট পরীক্ষা করে আবার চেষ্টা করুন।",true);
+else
+setStatus((e.message||"তথ্য লোড করা যায়নি।")+" ইন্টারনেট সংযোগ পরীক্ষা করুন।",true);
 
 }finally{
+clearTimeout(timer);
 
-$("loadBtn").disabled=false;
-
+if(requestId===activeWeatherRequest){
+$("searchBtn").disabled=false;
+$("locBtn").disabled=false;
+}
+}
 }
 
+async function searchPlace(){
+
+const q=$("place").value.trim();
+
+if(!q){
+setStatus("প্রথমে একটি জেলার বা শহরের নাম লিখুন।",true);
+return;
 }
 
-$("loadBtn").addEventListener("click",loadWeather);
-select.addEventListener("change",loadWeather);
+if(districts[q]){
+const p=districts[q];
+return loadWeather(p[0],p[1],q);
+}
 
-loadWeather();
+try{
+setStatus("স্থান খোঁজা হচ্ছে...");
+
+const controller=new AbortController();
+const timer=setTimeout(()=>controller.abort(),12000);
+
+let r;
+
+try{
+r=await fetch(
+"https://geocoding-api.open-meteo.com/v1/search?name="+
+encodeURIComponent(q)+
+"&count=1&language=bn&format=json",
+{signal:controller.signal}
+);
+}finally{
+clearTimeout(timer);
+}
+
+if(!r.ok)
+throw new Error("স্থান খোঁজার সার্ভার উত্তর দেয়নি।");
+
+const j=await r.json();
+
+if(!j.results?.length)
+throw new Error("এই নামে কোনো স্থান পাওয়া যায়নি।");
+
+const p=j.results[0];
+
+await loadWeather(
+p.latitude,
+p.longitude,
+[p.name,p.admin1,p.country].filter(Boolean).join(", ")
+);
+
+}catch(e){
+setStatus(
+e.name==="AbortError"
+?"স্থান খুঁজতে ১২ সেকেন্ডের বেশি সময় লাগছে। আবার চেষ্টা করুন।"
+:(e.message||"স্থান খোঁজা যায়নি।"),
+true
+);
+}
+}
+
+$("searchBtn").addEventListener("click",searchPlace);
+
+$("place").addEventListener("keydown",e=>{
+if(e.key==="Enter")searchPlace();
+});
+
+$("locBtn").addEventListener("click",()=>{
+
+if(!navigator.geolocation){
+setStatus("এই ব্রাউজারে লোকেশন সুবিধা নেই।",true);
+return;
+}
+
+setStatus("আপনার অবস্থান নির্ধারণ করা হচ্ছে...");
+
+navigator.geolocation.getCurrentPosition(
+p=>loadWeather(p.coords.latitude,p.coords.longitude,"আপনার বর্তমান অবস্থান"),
+()=>setStatus("লোকেশন পাওয়া যায়নি। ব্রাউজারের Location permission চালু করুন।",true),
+{enableHighAccuracy:true,timeout:12000}
+);
+
+});
+
+$("cropSelect").addEventListener("change",()=>{
+if(window.latestWeather)
+makeAdvice(window.latestWeather.current,window.latestWeather.daily);
+});
+
+$("stageSelect").addEventListener("change",()=>{
+if(window.latestWeather)
+makeAdvice(window.latestWeather.current,window.latestWeather.daily);
+});
+
+$("notifyBtn").addEventListener("click",async()=>{
+
+if(!("Notification"in window)){
+$("notifyStatus").textContent="এই ব্রাউজারে নোটিফিকেশন সমর্থিত নয়।";
+return;
+}
+
+try{
+const p=await Notification.requestPermission();
+
+$("notifyStatus").textContent=p==="granted"
+?"অনুমতি দেওয়া হয়েছে। স্বয়ংক্রিয় আবহাওয়া সতর্কতার জন্য Push সেটআপ বাকি।"
+:"নোটিফিকেশন অনুমতি দেওয়া হয়নি।";
+
+}catch(e){
+$("notifyStatus").textContent="অনুমতি নেওয়া যায়নি।";
+}
+
+});
+
+let installPrompt=null;
+const installButton=$("installBtn");
+
+window.addEventListener("beforeinstallprompt",e=>{
+e.preventDefault();
+installPrompt=e;
+installButton.disabled=false;
+installButton.textContent="📲 এখনই ইনস্টল করুন";
+});
+
+window.addEventListener("appinstalled",()=>{
+installPrompt=null;
+installButton.textContent="✓ অ্যাপ ইনস্টল হয়েছে";
+installButton.disabled=true;
+});
+
+installButton.addEventListener("click",async()=>{
+
+if(installPrompt){
+installPrompt.prompt();
+
+try{
+const choice=await installPrompt.userChoice;
+installButton.textContent=choice.outcome==="accepted"
+?"ইনস্টল প্রক্রিয়া সম্পন্ন"
+:"আবার ইনস্টল করতে পারেন";
+}catch(e){
+installButton.textContent="ব্রাউজার মেনু থেকে ইনস্টল করুন";
+}
+
+installPrompt=null;
+return;
+}
+
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+
+if(isIOS){
+alert("Safari-তে Share বাটনে চাপুন, তারপর ‘Add to Home Screen’ নির্বাচন করুন।");
+}else{
+alert("Chrome মেনু (⋮) খুলুন → ‘Install app’ অথবা ‘Add to Home screen’ নির্বাচন করুন। ইনস্টল অপশন না এলে HTTPS-এ প্রকাশিত সাইটটি Chrome-এ খুলুন।");
+}
+
+});
+
+if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){
+window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(err=>console.warn("Service worker registration failed",err)));
+}
+
+loadWeather(districts["ঢাকা"][0],districts["ঢাকা"][1],"ঢাকা");
 
 </script>
 </body>
