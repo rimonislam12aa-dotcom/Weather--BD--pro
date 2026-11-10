@@ -187,7 +187,7 @@ footer{text-align:center;padding:20px;color:#718578;font-size:13px}
 
 <section class="card">
 <h2>📲 অ্যাপ ইনস্টল</h2>
-<p>Weather BD Pro আপনার ফোনে ইনস্টল করতে পারবেন।</p>
+<p>Weather BD Pro আপনার ফোনে ইনস্টল করতে পারবেন።</p>
 <button id="installBtn" hidden>Install App</button>
 </section>
 
@@ -569,8 +569,7 @@ $("installBtn").addEventListener("click",async()=>{
  $("installBtn").hidden=true;
 });
 
-// ইনপুট বক্সে এন্টার (Enter) প্রেস করলে সার্চ ট্রিগার করার লজিক
-$("search").addEventListener("keypress", function(event) {
+ $("search").addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
         searchCity();
     }
@@ -578,5 +577,10 @@ $("search").addEventListener("keypress", function(event) {
 
 loadWeather();
 </script>
+
+<!-- এরুদা (Eruda) ডিবাগিং টুল -->
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>eruda.init();</script>
+
 </body>
 </html>
