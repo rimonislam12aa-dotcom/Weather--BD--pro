@@ -207,7 +207,6 @@ Weather BD Pro © 2026<br>
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyCxINWdKD9oKycRP4nBuhe82fXspjYTz4M",
   authDomain: "weather-bd-pro.firebaseapp.com",
@@ -331,7 +330,7 @@ function timeFormat(value){
  return value.slice(11,16);
 }
 
-async function searchCity(){
+window.searchCity = async function() {
  const name=$("search").value.trim();
  if(!name)return setStatus("একটি জেলার নাম লিখুন।",true);
 
@@ -369,7 +368,7 @@ async function searchCity(){
  }
 }
 
-async function myLocation(){
+window.myLocation = async function() {
  if(!navigator.geolocation){
  return setStatus("আপনার ব্রাউজারে GPS নেই।",true);
  }
@@ -569,14 +568,15 @@ $("installBtn").addEventListener("click",async()=>{
  installPrompt=null;
  $("installBtn").hidden=true;
 });
-// ইন্টার প্রেস করলে সার্চ কাজ করার জন্য এটি যোগ করুন
+
+// ইনপুট বক্সে এন্টার (Enter) প্রেস করলে সার্চ ট্রিগার করার লজিক
 $("search").addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
         searchCity();
     }
 });
-loadWeather();
 
+loadWeather();
 </script>
 </body>
- </html>
+</html>
