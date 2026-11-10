@@ -169,19 +169,19 @@ footer{text-align:center;padding:20px;color:#718578;font-size:13px}
 
 <section class="card agri">
 <h2>🌱 স্মার্ট কৃষি পরামর্শ</h2>
-<p id="agriAdvice">আবহাওয়ার তথ্য পাওয়ার পর কৃষি পরামর্শ দেখানো হবে।</p>
+<p id="agriAdvice">আবহাওয়ার তথ্য পাওয়ার পর কৃষি পরামর্শ দেখানো হবে.</p>
 <p id="agriRain"></p>
 </section>
 
 <section class="card notice">
 <h2>⚠️ আবহাওয়া সতর্কবার্তা</h2>
-<p id="alert">বর্তমান আবহাওয়ার তথ্যের ভিত্তিতে সতর্কতা দেখানো হবে।</p>
+<p id="alert">বর্তমান আবহাওয়ার তথ্যের ভিত্তিতে সতর্কতা দেখানো হবে.</p>
 </section>
 
 <section class="card">
 <h2>🔔 নোটিফিকেশন</h2>
-<p>আবহাওয়ার সতর্কবার্তা পেতে ব্রাউজার নোটিফিকেশন চালু করুন।</p>
-<button onclick="enableNotifications()">নোটিফিকেশন চালু করুন</button>
+<p id="pushDescript">সরাসরি জরুরি আবহাওয়া সতর্কবার্তা পেতে পুশ নোটিফিকেশন চালু করুন।</p>
+<button id="pushBtn" onclick="togglePushSubscription()">পুশ নোটিফিকেশন চালু করুন</button>
 <p id="notificationStatus"></p>
 </section>
 
@@ -203,8 +203,81 @@ Weather BD Pro © 2026<br>
 বাংলাদেশের আবহাওয়া ও কৃষি তথ্য
 </footer>
 
-<script>
-"use strict";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCxINWdKD9oKycRP4nBuhe_v8A...", 
+  authDomain: "weather-bd-proto.firebaseapp.com",
+  projectId: "weather-bd-proto",
+  storageBucket: "weather-bd-proto.appspot.com",
+  messagingSenderId: "958275433699",
+  appId: "1:958275433699:web:e08edaccbee1b2fce2b163",
+  measurementId: "G-YL2BNLF6Z9"
+};
+
+const app = initializeApp(firebaseConfig);
+const messaging = getMessaging(app);
+
+const PublicVapidKey = "BEA6015vOP9V_NiSLj22w0Rwesk5ycLfw1MsmSz8Q_ZzIbNaXioZZSVKRnw4Mw6_vMDBoSzMVHax3oCb-2b62ok"; 
+let isSubscribed = false;
+
+window.togglePushSubscription = async function() {
+    const btn = document.getElementById("pushBtn");
+    const statusP = document.getElementById("notificationStatus");
+    
+    if (isSubscribed) {
+        statusP.textContent = "ইতিমধ্যে সাবস্ক্রাইব করা আছে।";
+        return;
+    }
+
+    try {
+        const registration = await navigator.serviceWorker.ready;
+        const permission = await Notification.requestPermission();
+        
+        if (permission !== 'granted') {
+            statusP.textContent = "নোটিফিকেশনের অনুমতি দেওয়া হয়নি।";
+            return;
+        }
+
+        const token = await getToken(messaging, { 
+            vapidKey: PublicVapidKey,
+            serviceWorkerRegistration: registration 
+        });
+
+        if (token) {
+            console.log("FCM Registration Token:", token);
+            statusP.style.color = "#087e4b";
+            statusP.textContent = "সফলভাবে পুশ নোটিফিকেশন চালু হয়েছে!";
+            btn.textContent = "সাবস্ক্রাইবড";
+            btn.disabled = true;
+            isSubscribed = true;
+            
+        } else {
+            statusP.textContent = "টোকেন পাওয়া যায়নি।";
+        }
+    } catch (error) {
+        console.error("Push subscription error:", error);
+        statusP.textContent = "ত্রুটি ঘটেছে: " + error.message;
+    }
+};
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js')
+    .then((reg) => {
+        console.log('Service Worker registered for FCM');
+        onMessage(messaging, (payload) => {
+            console.log('Foreground message received. ', payload);
+            if (Notification.permission === 'granted') {
+                new Notification(payload.notification.title, {
+                    body: payload.notification.body,
+                    icon: './icons/icon.svg'
+                });
+            }
+        });
+    }).catch(err => console.error('SW registration failed:', err));
+}
 
 const $ = id => document.getElementById(id);
 
@@ -482,30 +555,6 @@ function weatherAlert(c,d){
  "বর্তমান তথ্য অনুযায়ী উল্লেখযোগ্য আবহাওয়া সতর্কতা পাওয়া যায়নি।";
 }
 
-async function enableNotifications(){
- if(!("Notification" in window)){
- $("notificationStatus").textContent="এই ব্রাউজারে Notification সমর্থিত নয়।";
- return;
- }
-
- try{
- const permission=await Notification.requestPermission();
-
- $("notificationStatus").textContent=
- permission==="granted"?
- "নোটিফিকেশন অনুমতি চালু হয়েছে।":
- "নোটিফিকেশন অনুমতি দেওয়া হয়নি।";
-
- if(permission==="granted"){
- new Notification("Weather BD Pro",{
- body:"আবহাওয়া নোটিফিকেশন চালু হয়েছে।"
- });
- }
- }catch(error){
- $("notificationStatus").textContent="নোটিফিকেশন চালু করা যায়নি।";
- }
-}
-
 window.addEventListener("beforeinstallprompt",event=>{
  event.preventDefault();
  installPrompt=event;
@@ -520,16 +569,8 @@ $("installBtn").addEventListener("click",async()=>{
  $("installBtn").hidden=true;
 });
 
-if("serviceWorker" in navigator && location.protocol.startsWith("http")){
- window.addEventListener("load",()=>{
- navigator.serviceWorker.register("./sw.js")
- .then(()=>console.log("Service Worker registered"))
- .catch(error=>console.error("SW Error:",error));
- });
-}
-
 loadWeather();
 
 </script>
 </body>
-</html>
+ </html>
