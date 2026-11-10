@@ -1,0 +1,22 @@
+
+{
+  "id": "./",
+  "name": "Weather BD Pro",
+  "short_name": "Weather BD",
+  "description": "বাংলাদেশের আবহাওয়া ও স্মার্ট কৃষি তথ্য",
+  "lang": "bn",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eef5f1",
+  "theme_color": "#087e4b",
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
