@@ -134,8 +134,8 @@ footer{text-align:center;padding:20px;color:#718578;font-size:13px}
 </datalist>
 
 <div class="search">
-<button onclick="searchCity()">🔍 অনুসন্ধান</button>
-<button class="secondary" onclick="myLocation()">📍 আমার অবস্থান</button>
+<button id="searchBtn">🔍 অনুসন্ধান</button>
+<button id="locationBtn" class="secondary">📍 আমার অবস্থান</button>
 </div>
 <p id="status">আবহাওয়ার তথ্য লোড হচ্ছে...</p>
 </section>
@@ -187,12 +187,12 @@ footer{text-align:center;padding:20px;color:#718578;font-size:13px}
 
 <section class="card">
 <h2>📲 অ্যাপ ইনস্টল</h2>
-<p>Weather BD Pro আপনার ফোনে ইনস্টল করতে পারবেন።</p>
+<p>Weather BD Pro আপনার ফোনে ইনস্টল করতে পারবেন।</p>
 <button id="installBtn" hidden>Install App</button>
 </section>
 
 <section class="card">
-<button class="secondary" onclick="loadWeather()">🔄 আবহাওয়া রিফ্রেশ</button>
+<button id="refreshBtn" class="secondary">🔄 আবহাওয়া রিফ্রেশ</button>
 <p id="updated"></p>
 </section>
 
@@ -330,7 +330,7 @@ function timeFormat(value){
  return value.slice(11,16);
 }
 
-window.searchCity = async function() {
+async function searchCity() {
  const name=$("search").value.trim();
  if(!name)return setStatus("একটি জেলার নাম লিখুন।",true);
 
@@ -368,7 +368,7 @@ window.searchCity = async function() {
  }
 }
 
-window.myLocation = async function() {
+async function myLocation() {
  if(!navigator.geolocation){
  return setStatus("আপনার ব্রাউজারে GPS নেই।",true);
  }
@@ -511,7 +511,7 @@ function agricultureAdvice(c,d){
  }
 
  if(c.relative_humidity_2m>=80){
- advice.push("বাতাসে আর্দ্রতা বেশি। ছত্রাকজনিত রোগের লক্ষণ পর্যবেক্ষণ করুন।");
+ advice.push("বাতাসে আর্দ্রতা বেশি। ছত্রাকজনিত রোগের লক্ষণ পর্যবেক্ষণ করুন።");
  }
 
  if(c.precipitation>0){
@@ -569,7 +569,12 @@ $("installBtn").addEventListener("click",async()=>{
  $("installBtn").hidden=true;
 });
 
- $("search").addEventListener("keypress", function(event) {
+// সরাসরি ইভেন্ট লিসেনার সংযুক্ত করা হলো
+$("searchBtn").addEventListener("click", searchCity);
+$("locationBtn").addEventListener("click", myLocation);
+$("refreshBtn").addEventListener("click", loadWeather);
+
+$("search").addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
         searchCity();
     }
@@ -583,4 +588,4 @@ loadWeather();
 <script>eruda.init();</script>
 
 </body>
-</html>
+ </html>
