@@ -70,3 +70,16 @@ self.addEventListener("fetch", event => {
       })
   );
 });
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.match(event.request).then((cachedResponse) => {
+        const fetchedPromise = fetch(event.request).then((networkResponse) => {
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        });
+        return cachedResponse || fetchedPromise;
+      });
+    })
+  );
+});
