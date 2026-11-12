@@ -1,4 +1,3 @@
-
 const CACHE_NAME = "weather-bd-v3";
 
 const FILES = [
@@ -14,7 +13,6 @@ self.addEventListener("install", event => {
       cache.addAll(FILES)
     )
   );
-
   self.skipWaiting();
 });
 
@@ -28,7 +26,6 @@ self.addEventListener("activate", event => {
       )
     )
   );
-
   self.clients.claim();
 });
 
@@ -68,18 +65,5 @@ self.addEventListener("fetch", event => {
           statusText: "Offline"
         });
       })
-  );
-});
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.match(event.request).then((cachedResponse) => {
-        const fetchedPromise = fetch(event.request).then((networkResponse) => {
-          cache.put(event.request, networkResponse.clone());
-          return networkResponse;
-        });
-        return cachedResponse || fetchedPromise;
-      });
-    })
   );
 });
