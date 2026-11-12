@@ -8,9 +8,13 @@ window.OneSignalDeferred = window.OneSignalDeferred || [];
 
 OneSignalDeferred.push(async function(OneSignal) {
     await OneSignal.init({
-        appId: "33b59ea9-7c1a-4e3e-9002-713b9e2e76e5"
-    });
+    appId: "33b59ea9-7c1a-4e3e-9002-713b9e2e76e5",
+    serviceWorkerPath: "/Weather--BD--pro/sw.js",
+    serviceWorkerParam: {
+        scope: "/Weather--BD--pro/"
+    }
 });
+    });
 </script>
  <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#087e4b">
