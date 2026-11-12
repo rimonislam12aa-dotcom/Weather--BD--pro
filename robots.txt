@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://rimonislam12aa-dotcom.github.io/Weather--BD--pro/sitemap.xml
