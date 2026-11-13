@@ -154,7 +154,12 @@ footer{text-align:center;padding:20px;color:#718578;font-size:13px}
 </div>
 <p id="status">আবহাওয়ার তথ্য লোড হচ্ছে...</p>
 </section>
-
+<section class="card agri">
+<h2>🌱 স্মার্ট কৃষি পরামর্শ</h2>
+<p id="agriAdvice">আবহাওয়ার তথ্য পাওয়ার পর কৃষি পরামর্শ দেখানো হবে.</p>
+<p id="agriHarvest" style="font-weight: bold; margin-top: 8px;"></p>
+<p id="agriRain"></p>
+</section>
 <section class="card weather">
 <h2 id="place">ঢাকা, বাংলাদেশ</h2>
 <div id="weatherIcon">🌤️</div>
@@ -526,7 +531,7 @@ function agricultureAdvice(c,d){
  }
 
  if(c.relative_humidity_2m>=80){
- advice.push("বাতাসে আর্দ্রতা বেশি। ছত্রাকজনিত রোগের লক্ষণ পর্যবেক্ষণ করুন።");
+ advice.push("বাতাসে আর্দ্রতা বেশি। ছত্রাকজনিত রোগের লক্ষণ পর্যবেক্ষণ করুন।");
  }
 
  if(c.precipitation>0){
@@ -545,7 +550,24 @@ function agricultureAdvice(c,d){
  advice.push("আবহাওয়া তুলনামূলক স্বাভাবিক। নিয়মিত জমি পর্যবেক্ষণ ও সঠিক সেচ ব্যবস্থাপনা বজায় রাখুন।");
  }
 
+ // --- ফসল কাটার উপযুক্ততা যাচাই (Crop Harvesting Logic) ---
+ let harvestMsg = "✅ ফসল কাটার জন্য আবহাওয়া অনুকূল রয়েছে।";
+ let harvestColor = "#087e4b"; // সবুজ রঙ
+
+ if (c.precipitation > 0 || c.weather_code >= 51) {
+   harvestMsg = "❌ এখন বৃষ্টি বা ঝড়ো আবহাওয়া চলছে, ফসল কাটা থেকে বিরত থাকুন।";
+   harvestColor = "#c62828"; // লাল রঙ
+ } else if (d.precipitation_probability_max[0] >= 50) {
+   harvestMsg = "⚠️ আজ বৃষ্টির সম্ভাবনা বেশি (" + d.precipitation_probability_max[0] + "%)। পাকা ফসল দ্রুত কেটে নিরাপদ স্থানে রাখুন বা সতর্ক থাকুন।";
+   harvestColor = "#d97706"; // কমলা রঙ
+ } else if (c.wind_speed_10m >= 25) {
+   harvestMsg = "⚠️ বাতাসের গতিবেগ বেশি (" + c.wind_speed_10m + " km/h), ফসল কাটায় সতর্কতা অবলম্বন করুন।";
+   harvestColor = "#d97706";
+ }
+
  $("agriAdvice").textContent=advice.join(" ");
+ $("agriHarvest").textContent = harvestMsg;
+ $("agriHarvest").style.color = harvestColor;
  $("agriRain").textContent=
  "আজ বৃষ্টির সম্ভাবনা: "+d.precipitation_probability_max[0]+"%";
 }
