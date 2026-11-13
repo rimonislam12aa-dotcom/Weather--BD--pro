@@ -563,6 +563,9 @@ function agricultureAdvice(c,d){
  } else if (c.wind_speed_10m >= 25) {
    harvestMsg = "⚠️ বাতাসের গতিবেগ বেশি (" + c.wind_speed_10m + " km/h), ফসল কাটায় সতর্কতা অবলম্বন করুন।";
    harvestColor = "#d97706";
+if (c.wind_speed_10m >= 25 || c.precipitation > 0) {
+   advice.push("⚠️ বাতাসের গতিবেগ বেশি বা বৃষ্টির সম্ভাবনা থাকায় এই মুহূর্তে কীটনাশক ছিটানো থেকে বিরত থাকুন।");
+}
  }
 
  $("agriAdvice").textContent=advice.join(" ");
