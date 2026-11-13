@@ -1,632 +1,449 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
- <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></scripts>
-<script>
-window.OneSignalDeferred = window.OneSignalDeferred || [];
-
-OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-    appId: "33b59ea9-7c1a-4e3e-9002-713b9e2e76e5",
-    serviceWorkerPath: "/Weather--BD--pro/sw.js",
-    serviceWorkerParam: {
-        scope: "/Weather--BD--pro/"
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#087e4b">
+  <meta name="description" content="Weather BD Pro - বাংলাদেশের লাইভ আবহাওয়া ও স্মার্ট কৃষি পরামর্শ">
+  <title>Weather BD Pro | লাইভ আবহাওয়া ও স্মার্ট কৃষি</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/icon.svg">
+  <style>
+    :root {
+      --primary: #087e4b;
+      --primary-dark: #064d35;
+      --secondary: #2c5e48;
+      --bg: #eef5f1;
+      --card-bg: #ffffff;
+      --text: #17352a;
+      --muted: #5b7366;
+      --border: #d5e4dc;
     }
-});
-    });
-</script>
- <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#087e4b">
-<meta name="description" content="Weather BD Pro - বাংলাদেশের লাইভ আবহাওয়া ও কৃষি পরামর্শ">
-
-<title>Weather BD Pro | আবহাওয়া ও কৃষি</title>
-
-<link rel="manifest" href="./manifest.webmanifest">
-<link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="./icons/icon.svg">
-
- <script src="script.js"></script>
-<style>
-*{box-sizing:border-box}
-body{
- margin:0;
- font-family:Arial,"Noto Sans Bengali",sans-serif;
- background:#eef5f1;
- color:#17352a;
-}
-header{
- background:linear-gradient(135deg,#087e4b,#064d35);
- color:white;
- padding:25px 16px;
- text-align:center;
-}
-header h1{margin:0;font-size:27px}
-header p{margin:9px 0 0;color:#d9f5e7}
-main{max-width:950px;margin:auto;padding:15px}
-.card{
- background:white;
- border-radius:16px;
- padding:17px;
- margin:14px 0;
- box-shadow:0 3px 14px #17352a12;
-}
-h2{font-size:19px;margin:0 0 14px}
-input,select,button{
- width:100%;
- padding:12px;
- border-radius:10px;
- border:1px solid #cbdcd2;
- font-size:15px;
- margin:5px 0;
-}
-button{
- background:#087e4b;
- color:white;
- border:0;
- font-weight:bold;
- cursor:pointer;
-}
-button.secondary{background:#315e4a}
-button:disabled{opacity:.6}
-.search{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.weather{text-align:center;background:linear-gradient(135deg,#e0f6e9,#f5fff8)}
-.temp{font-size:54px;font-weight:bold;color:#087e4b}
-#weatherIcon{font-size:55px}
-.grid{
- display:grid;
- grid-template-columns:repeat(2,1fr);
- gap:10px;
-}
-.stat{
- background:#f0f7f2;
- padding:13px;
- border-radius:11px;
-}
-.stat span{display:block;color:#647b6d;font-size:13px}
-.stat strong{font-size:18px}
-.forecast{
- display:grid;
- grid-template-columns:repeat(5,minmax(0,1fr));
- gap:7px;
-}
-.day{
- background:#f0f7f2;
- text-align:center;
- padding:10px 3px;
- border-radius:10px;
- font-size:13px;
-}
-.day b{display:block;margin:7px 0}
-.agri{
- background:#e4f6e8;
- border-left:5px solid #159447;
-}
-.agri h2{color:#087e4b}
-.notice{
- background:#fff4d9;
- border-left:5px solid #e3a325;
-}
-#status{font-size:13px;color:#557364}
-footer{text-align:center;padding:20px;color:#718578;font-size:13px}
-@media(max-width:450px){
- .forecast{gap:4px}
- .day{font-size:11px;padding:8px 1px}
- .temp{font-size:45px}
-}
-</style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans Bengali", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #ffffff;
+      padding: 28px 16px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(6, 77, 53, 0.18);
+    }
+    header h1 { margin: 0; font-size: 28px; letter-spacing: 0.3px; }
+    header p { margin: 8px 0 0; color: #d9f5e7; font-size: 15px; }
+    main { max-width: 920px; margin: 0 auto; padding: 14px; }
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 18px;
+      margin: 14px 0;
+      box-shadow: 0 4px 16px rgba(23, 53, 42, 0.06);
+      border: 1px solid rgba(213, 228, 220, 0.6);
+    }
+    h2 { font-size: 18px; margin: 0 0 14px; display: flex; align-items: center; gap: 6px; }
+    input, button {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 15px;
+      margin: 5px 0;
+      font-family: inherit;
+    }
+    input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(8, 126, 75, 0.15); }
+    button {
+      background: var(--primary); color: #ffffff; border: 0; font-weight: bold; cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    button:hover:not(:disabled) { background: var(--primary-dark); }
+    button:active:not(:disabled) { transform: scale(0.99); }
+    button.secondary { background: var(--secondary); }
+    button:disabled { opacity: 0.65; cursor: not-allowed; }
+    .search-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+    .weather-hero { text-align: center; background: linear-gradient(135deg, #dff5e8, #f7fff9); border: 1px solid #bfe6cf; }
+    .weather-hero h2 { justify-content: center; font-size: 21px; color: var(--primary-dark); }
+    .temp { font-size: 56px; font-weight: bold; color: var(--primary); line-height: 1.1; margin: 6px 0; }
+    #weatherIcon { font-size: 58px; line-height: 1.1; }
+    #condition { font-size: 18px; font-weight: bold; margin: 4px 0; }
+    #feels { color: var(--muted); margin: 4px 0 0; font-size: 14px; }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    @media (min-width: 600px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+    .stat { background: #f2f8f4; padding: 14px; border-radius: 12px; border: 1px solid #e2efe7; }
+    .stat span { display: block; color: var(--muted); font-size: 13px; margin-bottom: 4px; }
+    .stat strong { font-size: 18px; color: var(--text); }
+    .forecast { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+    .day { background: #f2f8f4; text-align: center; padding: 12px 4px; border-radius: 12px; font-size: 13px; border: 1px solid #e2efe7; }
+    .day b { display: block; font-size: 24px; margin: 6px 0; }
+    .agri { background: #e6f7eb; border-left: 5px solid #159447; }
+    .agri h2 { color: var(--primary); }
+    .agri-item { background: rgba(255, 255, 255, 0.75); padding: 10px 12px; border-radius: 8px; margin: 8px 0; font-size: 14.5px; }
+    .notice { background: #fff6df; border-left: 5px solid #e3a325; }
+    #status { font-size: 13.5px; color: var(--muted); margin: 8px 0 0; }
+    #notificationStatus, #updated { font-size: 13.5px; margin: 8px 0 0; color: var(--muted); }
+    footer { text-align: center; padding: 24px 16px; color: var(--muted); font-size: 13px; }
+    @media (max-width: 450px) {
+      .forecast { gap: 4px; }
+      .day { font-size: 11px; padding: 8px 2px; }
+      .day b { font-size: 20px; }
+      .temp { font-size: 46px; }
+    }
+  </style>
 </head>
-
 <body>
 
 <header>
-<h1>🌤️ Weather BD Pro</h1>
-<p>বাংলাদেশের আবহাওয়া ও স্মার্ট কৃষি তথ্য</p>
+  <h1>🌤️ Weather BD Pro</h1>
+  <p>বাংলাদেশের লাইভ আবহাওয়া ও স্মার্ট কৃষি পরামর্শ</p>
 </header>
 
 <main>
+  <section class="card">
+    <h2>📍 আপনার এলাকার আবহাওয়া</h2>
+    <input id="search" list="districts" placeholder="জেলা বা শহরের নাম লিখুন">
+    <datalist id="districts">
+      <option value="Dhaka"><option value="Dinajpur"><option value="Rangpur"><option value="Rajshahi">
+      <option value="Chattogram"><option value="Sylhet"><option value="Khulna"><option value="Barishal">
+      <option value="Mymensingh"><option value="Cumilla"><option value="Bogura"><option value="Jessore">
+      <option value="Pabna"><option value="Kushtia"><option value="Feni"><option value="Cox's Bazar">
+      <option value="Thakurgaon"><option value="Panchagarh"><option value="Nilphamari"><option value="Lalmonirhat">
+      <option value="Kurigram"><option value="Gaibandha"><option value="Noakhali"><option value="Gazipur">
+      <option value="Narayanganj"><option value="Tangail"><option value="Faridpur"><option value="Satkhira">
+      <option value="Bhola"><option value="Patuakhali"><option value="Moulvibazar"><option value="Habiganj">
+      <option value="Sunamganj">
+    </datalist>
+    <div class="search-actions">
+      <button id="searchBtn">🔍 অনুসন্ধান</button>
+      <button id="locationBtn" class="secondary">📍 আমার অবস্থান</button>
+    </div>
+    <p id="status">আবহাওয়ার তথ্য লোড হচ্ছে...</p>
+  </section>
 
-<section class="card">
-<h2>📍 আপনার এলাকার আবহাওয়া</h2>
-<input id="search" list="districts" placeholder="শহর বা জেলার নাম লিখুন">
-<datalist id="districts">
-<option value="Dhaka">
-<option value="Dinajpur">
-<option value="Rangpur">
-<option value="Rajshahi">
-<option value="Chattogram">
-<option value="Sylhet">
-<option value="Khulna">
-<option value="Barishal">
-<option value="Mymensingh">
-<option value="Cumilla">
-<option value="Bogura">
-<option value="Jessore">
-<option value="Pabna">
-<option value="Kushtia">
-<option value="Feni">
-<option value="Cox's Bazar">
-</datalist>
+  <section class="card weather-hero">
+    <h2 id="place">ঢাকা, বাংলাদেশ</h2>
+    <div id="weatherIcon">🌤️</div>
+    <div class="temp" id="temperature">--°C</div>
+    <p id="condition">আবহাওয়ার তথ্য অপেক্ষমাণ</p>
+    <p id="feels">অনুভূত তাপমাত্রা: --°C</p>
+  </section>
 
-<div class="search">
-<button id="searchBtn">🔍 অনুসন্ধান</button>
-<button id="locationBtn" class="secondary">📍 আমার অবস্থান</button>
-</div>
-<p id="status">আবহাওয়ার তথ্য লোড হচ্ছে...</p>
-</section>
-<section class="card agri">
-<h2>🌱 স্মার্ট কৃষি পরামর্শ</h2>
-<p id="agriAdvice">আবহাওয়ার তথ্য পাওয়ার পর কৃষি পরামর্শ দেখানো হবে.</p>
-<p id="sowMsg" style="font-weight: bold; margin-top: 8px;"></p>
-<p id="sprayMsg" style="font-weight: bold; margin-top: 4px;"></p>
-<p id="agriHarvest" style="font-weight: bold; margin-top: 8px;"></p>
-<p id="agriRain"></p>
-</section>
-<section class="card weather">
-<h2 id="place">ঢাকা, বাংলাদেশ</h2>
-<div id="weatherIcon">🌤️</div>
-<div class="temp" id="temperature">--°C</div>
-<p id="condition">আবহাওয়ার তথ্য অপেক্ষমাণ</p>
-<p id="feels">অনুভূত তাপমাত্রা: --°C</p>
-</section>
+  <section class="card">
+    <h2>🌡️ আবহাওয়ার বিস্তারিত</h2>
+    <div class="grid">
+      <div class="stat"><span>💧 আর্দ্রতা</span><strong id="humidity">--%</strong></div>
+      <div class="stat"><span>💨 বাতাসের গতি</span><strong id="wind">--</strong></div>
+      <div class="stat"><span>🌧️ বর্তমান বৃষ্টিপাত</span><strong id="rain">--</strong></div>
+      <div class="stat"><span>☀️ UV সূচক</span><strong id="uv">--</strong></div>
+      <div class="stat"><span>🌅 সূর্যোদয়</span><strong id="sunrise">--</strong></div>
+      <div class="stat"><span>🌇 সূর্যাস্ত</span><strong id="sunset">--</strong></div>
+    </div>
+  </section>
 
-<section class="card">
-<h2>🌡️ আবহাওয়ার বিস্তারিত</h2>
-<div class="grid">
-<div class="stat"><span>💧 আর্দ্রতা</span><strong id="humidity">--%</strong></div>
-<div class="stat"><span>💨 বাতাসের গতি</span><strong id="wind">--</strong></div>
-<div class="stat"><span>🌧️ বৃষ্টিপাত</span><strong id="rain">--</strong></div>
-<div class="stat"><span>☀️ UV Index</span><strong id="uv">--</strong></div>
-<div class="stat"><span>🌅 সূর্যোদয়</span><strong id="sunrise">--</strong></div>
-<div class="stat"><span>🌇 সূর্যাস্ত</span><strong id="sunset">--</strong></div>
-</div>
-</section>
+  <section class="card">
+    <h2>📅 আগামী ৫ দিনের পূর্বাভাস</h2>
+    <div class="forecast" id="forecast"><div class="day">লোড হচ্ছে...</div></div>
+  </section>
 
-<section class="card">
-<h2>📅 আগামী ৫ দিনের পূর্বাভাস</h2>
-<div class="forecast" id="forecast">
-<div class="day">লোড হচ্ছে...</div>
-</div>
-</section>
+  <section class="card agri">
+    <h2>🌱 স্মার্ট কৃষি পরামর্শ</h2>
+    <div class="agri-item" id="agriAdvice">আবহাওয়ার তথ্য পাওয়ার পর কৃষি পরামর্শ দেখানো হবে।</div>
+    <div class="agri-item" id="agriHarvest" style="font-weight: bold;"></div>
+    <div class="agri-item" id="sowMsg" style="font-weight: bold;"></div>
+    <div class="agri-item" id="sprayMsg" style="font-weight: bold;"></div>
+    <div class="agri-item" id="agriRain"></div>
+  </section>
 
-<section class="card agri">
-<h2>🌱 স্মার্ট কৃষি পরামর্শ</h2>
-<p id="agriAdvice">আবহাওয়ার তথ্য পাওয়ার পর কৃষি পরামর্শ দেখানো হবে.</p>
-<p id="agriRain"></p>
-</section>
+  <section class="card notice">
+    <h2>⚠️ আবহাওয়া সতর্কবার্তা</h2>
+    <p id="alert">বর্তমান আবহাওয়ার তথ্যের ভিত্তিতে সতর্কতা দেখানো হবে。</p>
+  </section>
 
-<section class="card notice">
-<h2>⚠️ আবহাওয়া সতর্কবার্তা</h2>
-<p id="alert">বর্তমান আবহাওয়ার তথ্যের ভিত্তিতে সতর্কতা দেখানো হবে.</p>
-</section>
+  <section class="card">
+    <h2>🔔 পুশ নোটিফিকেশন (FCM)</h2>
+    <p>সরাসরি জরুরি আবহাওয়া ও কৃষি সতর্কবার্তা পেতে পুশ নোটিফিকেশন চালু করুন。</p>
+    <button id="pushBtn">পুশ নোটিফিকেশন চালু করুন</button>
+    <p id="notificationStatus"></p>
+  </section>
 
-<section class="card">
-<h2>🔔 নোটিফিকেশন</h2>
-<p id="pushDescript">সরাসরি জরুরি আবহাওয়া সতর্কবার্তা পেতে পুশ নোটিফিকেশন চালু করুন।</p>
-<button id="pushBtn" onclick="togglePushSubscription()">পুশ নোটিফিকেশন চালু করুন</button>
-<p id="notificationStatus"></p>
-</section>
+  <section class="card" id="installCard" hidden>
+    <h2>📲 অ্যাপ ইনস্টল</h2>
+    <p>অফলাইনে দ্রুত ব্যবহারের জন্য Weather BD Pro আপনার ফোনে ইনস্টল করুন。</p>
+    <button id="installBtn">Install App</button>
+  </section>
 
-<section class="card">
-<h2>📲 অ্যাপ ইনস্টল</h2>
-<p>Weather BD Pro আপনার ফোনে ইনস্টল করতে পারবেন।</p>
-<button id="installBtn" hidden>Install App</button>
-</section>
-
-<section class="card">
-<button id="refreshBtn" class="secondary">🔄 আবহাওয়া রিফ্রেশ</button>
-<p id="updated"></p>
-</section>
-
+  <section class="card">
+    <button id="refreshBtn" class="secondary">🔄 আবহাওয়া রিফ্রেশ</button>
+    <p id="updated"></p>
+  </section>
 </main>
 
 <footer>
-Weather BD Pro © 2026<br>
-বাংলাদেশের আবহাওয়া ও কৃষি তথ্য
+  Weather BD Pro © 2026<br>
+  বাংলাদেশের আবহাওয়া ও স্মার্ট কৃষি তথ্য
 </footer>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCxINWdKD9oKycRP4nBuhe82fXspjYTz4M",
-  authDomain: "weather-bd-pro.firebaseapp.com",
-  projectId: "weather-bd-pro",
-  storageBucket: "weather-bd-pro.firebasestorage.app",
-  messagingSenderId: "958275433699",
-  appId: "1:958275433699:web:e08edaccb32a6158b881d6",
-  measurementId: "G-YL2BNLF6Z9"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyCxINWdKD9oKycRP4nBuhe82fXspjYTz4M",
+    authDomain: "weather-bd-pro.firebaseapp.com",
+    projectId: "weather-bd-pro",
+    storageBucket: "weather-bd-pro.firebasestorage.app",
+    messagingSenderId: "958275433699",
+    appId: "1:958275433699:web:e08edaccb32a6158b881d6",
+    measurementId: "G-YL2BNLF6Z9"
+  };
 
-const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
+  const app = initializeApp(firebaseConfig);
+  const messaging = getMessaging(app);
+  const publicVapidKey = "BEA6015vOP9V_NiSLj22w0Rwesk5ycLfw1MsmSz8Q_ZzIbNaXioZZSVKRnw4Mw6_vMDBoSzMVHax3oCb-2b62ok";
 
-const PublicVapidKey = "BEA6015vOP9V_NiSLj22w0Rwesk5ycLfw1MsmSz8Q_ZzIbNaXioZZSVKRnw4Mw6_vMDBoSzMVHax3oCb-2b62ok"; 
-let isSubscribed = false;
+  let swRegistration = null;
+  let isSubscribed = false;
 
-window.togglePushSubscription = async function() {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js")
+      .then((reg) => {
+        swRegistration = reg;
+        onMessage(messaging, (payload) => {
+          if (Notification.permission === "granted" && payload.notification) {
+            new Notification(payload.notification.title, {
+              body: payload.notification.body,
+              icon: "./icons/icon.svg"
+            });
+          }
+        });
+      })
+      .catch((err) => console.error("Service Worker registration failed:", err));
+  }
+
+  async function togglePushSubscription() {
     const btn = document.getElementById("pushBtn");
     const statusP = document.getElementById("notificationStatus");
-    
+
     if (isSubscribed) {
-        statusP.textContent = "ইতিমধ্যে সাবস্ক্রাইব করা আছে।";
-        return;
+      statusP.textContent = "ইতিমধ্যে সাবস্ক্রাইব করা আছে।";
+      return;
+    }
+
+    if (!("Notification" in window) || !("serviceWorker" in navigator)) {
+      statusP.style.color = "#c62828";
+      statusP.textContent = "আপনার ব্রাউজার পুশ নোটিফিকেশন সমর্থন করে না।";
+      return;
     }
 
     try {
-        const registration = await navigator.serviceWorker.ready;
-        const permission = await Notification.requestPermission();
-        
-        if (permission !== 'granted') {
-            statusP.textContent = "নোটিফিকেশনের অনুমতি দেওয়া হয়নি।";
-            return;
-        }
+      btn.disabled = true;
+      statusP.style.color = "#5b7366";
+      statusP.textContent = "অনুমতি চাওয়া হচ্ছে...";
 
-        const token = await getToken(messaging, { 
-            vapidKey: PublicVapidKey,
-            serviceWorkerRegistration: registration 
-        });
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        btn.disabled = false;
+        statusP.style.color = "#c62828";
+        statusP.textContent = "নোটিফিকেশনের অনুমতি দেওয়া হয়নি।";
+        return;
+      }
 
-        if (token) {
-            console.log("FCM Registration Token:", token);
-            statusP.style.color = "#087e4b";
-            statusP.textContent = "সফলভাবে পুশ নোটিফিকেশন চালু হয়েছে!";
-            btn.textContent = "সাবস্ক্রাইবড";
-            btn.disabled = true;
-            isSubscribed = true;
-            
-        } else {
-            statusP.textContent = "টোকেন পাওয়া যায়নি।";
-        }
+      const registration = swRegistration || await navigator.serviceWorker.ready;
+      const token = await getToken(messaging, {
+        vapidKey: publicVapidKey,
+        serviceWorkerRegistration: registration
+      });
+
+      if (token) {
+        localStorage.setItem("fcmToken", token);
+        statusP.style.color = "#087e4b";
+        statusP.textContent = "✅ সফলভাবে পুশ নোটিফিকেশন চালু হয়েছে!";
+        btn.textContent = "সাবস্ক্রাইবড";
+        isSubscribed = true;
+      } else {
+        btn.disabled = false;
+        statusP.style.color = "#c62828";
+        statusP.textContent = "টোকেন পাওয়া যায়নি। আবার চেষ্টা করুন।";
+      }
     } catch (error) {
-        console.error("Push subscription error:", error);
-        statusP.textContent = "ত্রুটি ঘটেছে: " + error.message;
+      btn.disabled = false;
+      statusP.style.color = "#c62828";
+      statusP.textContent = "ত্রুটি ঘটেছে: " + error.message;
     }
-};
-
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js')
-    .then((reg) => {
-        console.log('Service Worker registered for FCM');
-        onMessage(messaging, (payload) => {
-            console.log('Foreground message received. ', payload);
-            if (Notification.permission === 'granted') {
-                new Notification(payload.notification.title, {
-                    body: payload.notification.body,
-                    icon: './icons/icon.svg'
-                });
-            }
-        });
-    }).catch(err => console.error('SW registration failed:', err));
-}
-
-const $ = id => document.getElementById(id);
-
-let lat=23.8103;
-let lon=90.4125;
-let city="ঢাকা";
-let requestNumber=0;
-let cache={};
-let installPrompt=null;
-
-const districts={
-"Dhaka":[23.8103,90.4125],
-"Dinajpur":[25.6279,88.6332],
-"Rangpur":[25.7439,89.2752],
-"Rajshahi":[24.3745,88.6042],
-"Chattogram":[22.3569,91.7832],
-"Sylhet":[24.8949,91.8687],
-"Khulna":[22.8456,89.5403],
-"Barishal":[22.7010,90.3535],
-"Mymensingh":[24.7471,90.4203],
-"Cumilla":[23.4607,91.1809],
-"Bogura":[24.8465,89.3770],
-"Jessore":[23.1664,89.2081],
-"Pabna":[24.0064,89.2372],
-"Kushtia":[23.9013,89.1205],
-"Feni":[23.0159,91.3976],
-"Cox's Bazar":[21.4272,92.0058]
-};
-
-function setStatus(message,error=false){
- $("status").textContent=message;
- $("status").style.color=error?"#c62828":"#557364";
-}
-
-function weatherInfo(code){
- if(code===0)return ["☀️","পরিষ্কার আকাশ"];
- if(code<=2)return ["🌤️","আংশিক মেঘলা"];
- if(code===3)return ["☁️","মেঘলা আকাশ"];
- if(code<=48)return ["🌫️","কুয়াশা"];
- if(code<=57)return ["🌦️","গুঁড়ি গুঁড়ি বৃষ্টি"];
- if(code<=67)return ["🌧️","বৃষ্টি"];
- if(code<=77)return ["❄️","তুষারপাত"];
- if(code<=82)return ["🌧️","বৃষ্টির ঝাপটা"];
- if(code<=86)return ["🌨️","তুষার ঝাপটা"];
- return ["⛈️","বজ্রঝড়"];
-}
-
-function timeFormat(value){
- if(!value)return "--";
- return value.slice(11,16);
-}
-
-async function searchCity() {
- const name=$("search").value.trim();
- if(!name)return setStatus("একটি জেলার নাম লিখুন।",true);
-
- const key=Object.keys(districts).find(
- k=>k.toLowerCase()===name.toLowerCase()
- );
-
- if(key){
- lat=districts[key][0];
- lon=districts[key][1];
- city=key;
- loadWeather();
- return;
- }
-
- try{
- setStatus("স্থান অনুসন্ধান হচ্ছে...");
- const url="https://geocoding-api.open-meteo.com/v1/search?name="+
- encodeURIComponent(name)+"&count=1&language=bn&format=json";
-
- const response=await fetch(url);
- if(!response.ok)throw Error("স্থান অনুসন্ধান ব্যর্থ");
-
- const data=await response.json();
- if(!data.results?.length)throw Error("স্থান পাওয়া যায়নি");
-
- const result=data.results[0];
- lat=result.latitude;
- lon=result.longitude;
- city=result.name;
- loadWeather();
-
- }catch(error){
- setStatus(error.message,true);
- }
-}
-
-async function myLocation() {
- if(!navigator.geolocation){
- return setStatus("আপনার ব্রাউজারে GPS নেই।",true);
- }
-
- setStatus("আপনার অবস্থান খোঁজা হচ্ছে...");
-
- navigator.geolocation.getCurrentPosition(
- position=>{
- lat=position.coords.latitude;
- lon=position.coords.longitude;
- city="আপনার বর্তমান অবস্থান";
- loadWeather();
- },
- ()=>setStatus("GPS অনুমতি পাওয়া যায়নি।",true),
- {enableHighAccuracy:true,timeout:12000}
- );
-}
-
-async function loadWeather(){
- const currentRequest=++requestNumber;
- const key=lat.toFixed(3)+","+lon.toFixed(3);
-
- const cached=cache[key];
-
- if(cached && Date.now()-cached.time<300000){
- renderWeather(cached.data);
- setStatus("সংরক্ষিত আবহাওয়ার তথ্য দেখানো হচ্ছে।");
- return;
- }
-
- setStatus("লাইভ আবহাওয়ার তথ্য সংগ্রহ হচ্ছে...");
-
- const controller=new AbortController();
- const timeout=setTimeout(()=>controller.abort(),12000);
-
- try{
- const url="https://api.open-meteo.com/v1/forecast"+
- "?latitude="+lat+
- "&longitude="+lon+
- "&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m"+
- "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max,sunrise,sunset"+
- "&timezone=auto&forecast_days=5";
-
- const response=await fetch(url,{signal:controller.signal});
- if(!response.ok)throw Error("আবহাওয়া API সংযোগ ব্যর্থ");
-
- const data=await response.json();
-
- if(!data.current || !data.daily){
- throw Error("আবহাওয়ার তথ্য অসম্পূর্ণ");
- }
-
- if(currentRequest!==requestNumber)return;
-
- cache[key]={data,time:Date.now()};
-
- renderWeather(data);
-
- try{
- localStorage.setItem("weatherBDLast",JSON.stringify({
- data,city,lat,lon,time:Date.now()
- }));
- }catch(e){}
-
- setStatus("লাইভ আবহাওয়ার তথ্য সফলভাবে আপডেট হয়েছে।");
- $("updated").textContent="সর্বশেষ আপডেট: "+new Date().toLocaleString("bn-BD");
-
- }catch(error){
- if(currentRequest!==requestNumber)return;
-
- setStatus(
- error.name==="AbortError"?
- "সংযোগের সময় শেষ হয়েছে। আবার চেষ্টা করুন।":
- error.message,true
- );
-
- }finally{
- clearTimeout(timeout);
- }
-}
-
-function renderWeather(data){
- const c=data.current;
- const d=data.daily;
- const [icon,description]=weatherInfo(c.weather_code);
-
- $("place").textContent=city+", বাংলাদেশ";
- $("weatherIcon").textContent=icon;
- $("temperature").textContent=Math.round(c.temperature_2m)+"°C";
- $("condition").textContent=description;
- $("feels").textContent="অনুভূত তাপমাত্রা: "+c.apparent_temperature+"°C";
-
- $("humidity").textContent=c.relative_humidity_2m+"%";
- $("wind").textContent=c.wind_speed_10m+" km/h";
- $("rain").textContent=c.precipitation+" mm";
- $("uv").textContent=d.uv_index_max[0];
- $("sunrise").textContent=timeFormat(d.sunrise[0]);
- $("sunset").textContent=timeFormat(d.sunset[0]);
-
- renderForecast(d);
- agricultureAdvice(c,d);
- weatherAlert(c,d);
-}
-
-function renderForecast(data){
- const container=$("forecast");
- container.innerHTML="";
-
- data.time.forEach((date,i)=>{
- const [icon,description]=weatherInfo(data.weather_code[i]);
-
- const item=document.createElement("div");
- item.className="day";
-
- const day=document.createElement("strong");
- day.textContent=new Date(date+"T12:00:00").toLocaleDateString(
- "bn-BD",{weekday:"short"}
- );
-
- const symbol=document.createElement("b");
- symbol.textContent=icon;
-
- const temp=document.createElement("div");
- temp.textContent=Math.round(data.temperature_2m_max[i])+"° / "+
- Math.round(data.temperature_2m_min[i])+"°";
-
- const rain=document.createElement("div");
- rain.textContent="🌧️ "+data.precipitation_probability_max[i]+"%";
-
- item.append(day,symbol,temp,rain);
- container.appendChild(item);
- });
-}
-
-function agricultureAdvice(c,d){
- let advice=[];
-
- if(c.temperature_2m>=35){
- advice.push("তাপমাত্রা বেশি। ফসলের জমিতে প্রয়োজন অনুযায়ী সেচ দিন।");
- }
-
- if(c.relative_humidity_2m>=80){
- advice.push("বাতাসে আর্দ্রতা বেশি। ছত্রাকজনিত রোগের লক্ষণ পর্যবেক্ষণ করুন।");
- }
-
- if(c.precipitation>0){
- advice.push("বৃষ্টি হচ্ছে। জমিতে পানি নিষ্কাশনের ব্যবস্থা রাখুন।");
- }
-
- if(d.precipitation_probability_max[0]>=60){
- advice.push("বৃষ্টির সম্ভাবনা বেশি। সার ও কীটনাশক প্রয়োগের সময় আবহাওয়া বিবেচনা করুন।");
- }
-
- if(c.wind_speed_10m>=25){
- advice.push("বাতাসের গতি বেশি। গাছের প্রয়োজনীয় সহায়তা ও সুরক্ষা নিশ্চিত করুন।");
- }
-
- if(!advice.length){
- advice.push("আবহাওয়া তুলনামূলক স্বাভাবিক। নিয়মিত জমি পর্যবেক্ষণ ও সঠিক সেচ ব্যবস্থাপনা বজায় রাখুন।");
- }
-
- // --- ফসল কাটার উপযুক্ততা যাচাই (Crop Harvesting Logic) ---
- let harvestMsg = "✅ ফসল কাটার জন্য আবহাওয়া অনুকূল রয়েছে।";
- let harvestColor = "#087e4b"; // সবুজ রঙ
- let sowMsg = c.wind_speed_10m < 20 && c.precipitation == 0 ? "✅  বীজ বপনের জন্য আবহাওয়া অনুকূল।" : "⚠️ বাতাস বা বৃষ্টির কারণে বীজ বপন স্থগিত রাখুন।";
-let sprayMsg = c.wind_speed_10m < 25 && c.precipitation == 0 ? "✅ কীটনাশক প্রয়োগের জন্য আবহাওয়া অনুকূল।" : "⚠️ বেশি বাতাস বা বৃষ্টিতে কীটনাশক ছিটাবেন না।";
- 
-
- if (c.precipitation > 0 || c.weather_code >= 51) {
-   harvestMsg = "❌ এখন বৃষ্টি বা ঝড়ো আবহাওয়া চলছে, ফসল কাটা , কীটনাশক ছিটানো এবং বীজ বপন থেকে বিরত থাকুন।";
-   harvestColor = "#c62828"; // লাল রঙ
- } else if (d.precipitation_probability_max[0] >= 50) {
-   harvestMsg = "⚠️ আজ বৃষ্টির সম্ভাবনা বেশি (" + d.precipitation_probability_max[0] + "%)। পাকা ফসল দ্রুত কেটে নিরাপদ স্থানে রাখুন বা সতর্ক থাকুন।";
-   harvestColor = "#d97706"; // কমলা রঙ
- } else if (c.wind_speed_10m >= 25) {
-   harvestMsg = "⚠️ বাতাসের গতিবেগ বেশি (" + c.wind_speed_10m + " km/h), ফসল কাটায় সতর্কতা অবলম্বন করুন।";
-   harvestColor = "#d97706";
-document.getElementById("sowMsg").textContent = sowMsg;
-document.getElementById("sprayMsg").textContent = sprayMsg;
- }
-
- $("agriAdvice").textContent=advice.join(" ");
- $("agriHarvest").textContent = harvestMsg;
- $("agriHarvest").style.color = harvestColor;
- $("agriRain").textContent=
- "আজ বৃষ্টির সম্ভাবনা: "+d.precipitation_probability_max[0]+"%";
-}
-
-function weatherAlert(c,d){
- let alerts=[];
-
- if(c.temperature_2m>=38)
- alerts.push("অতিরিক্ত গরমের বিষয়ে সতর্ক থাকুন।");
-
- if(c.wind_speed_10m>=35)
- alerts.push("বাতাসের গতি বেশি। সতর্ক থাকুন।");
-
- if(d.precipitation_probability_max[0]>=80)
- alerts.push("আজ ভারী বৃষ্টির সম্ভাবনা রয়েছে।");
-
- if(c.weather_code>=95)
- alerts.push("বজ্রঝড়ের আবহাওয়া রয়েছে। নিরাপদ স্থানে থাকুন।");
-
- $("alert").textContent=alerts.length?
- alerts.join(" "):
- "বর্তমান তথ্য অনুযায়ী উল্লেখযোগ্য আবহাওয়া সতর্কতা পাওয়া যায়নি।";
-}
-
-window.addEventListener("beforeinstallprompt",event=>{
- event.preventDefault();
- installPrompt=event;
- $("installBtn").hidden=false;
-});
-
-$("installBtn").addEventListener("click",async()=>{
- if(!installPrompt)return;
- installPrompt.prompt();
- await installPrompt.userChoice;
- installPrompt=null;
- $("installBtn").hidden=true;
-});
-
-// সরাসরি ইভেন্ট লিসেনার সংযুক্ত করা হলো
-$("searchBtn").addEventListener("click", searchCity);
-$("locationBtn").addEventListener("click", myLocation);
-$("refreshBtn").addEventListener("click", loadWeather);
-
-$("search").addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-        searchCity();
+  }
+
+  document.getElementById("pushBtn").addEventListener("click", togglePushSubscription);
+
+  const $ = (id) => document.getElementById(id);
+  let lat = 23.8103, lon = 90.4125, city = "ঢাকা", requestNumber = 0, cache = {}, installPrompt = null;
+
+  const districts = {
+    "Dhaka": [23.8103, 90.4125], "Dinajpur": [25.6279, 88.6332], "Rangpur": [25.7439, 89.2752],
+    "Rajshahi": [24.3745, 88.6042], "Chattogram": [22.3569, 91.7832], "Sylhet": [24.8949, 91.8687],
+    "Khulna": [22.8456, 89.5403], "Barishal": [22.7010, 90.3535], "Mymensingh": [24.7471, 90.4203],
+    "Cumilla": [23.4607, 91.1809], "Bogura": [24.8465, 89.3770], "Jessore": [23.1664, 89.2081],
+    "Pabna": [24.0064, 89.2372], "Kushtia": [23.9013, 89.1205], "Feni": [23.0159, 91.3976],
+    "Cox's Bazar": [21.4272, 92.0058], "Thakurgaon": [26.0336, 88.4616], "Panchagarh": [26.3411, 88.5541],
+    "Nilphamari": [25.9317, 88.8560], "Lalmonirhat": [25.9923, 89.2847], "Kurigram": [25.8054, 89.6361],
+    "Gaibandha": [25.3287, 89.5280], "Noakhali": [22.8695, 91.0993], "Gazipur": [23.9999, 90.4202],
+    "Narayanganj": [23.6238, 90.5000], "Tangail": [24.2513, 89.9167], "Faridpur": [23.6070, 89.8429],
+    "Satkhira": [22.7185, 89.0705], "Bhola": [22.6859, 90.6481], "Patuakhali": [22.3596, 90.3298],
+    "Moulvibazar": [24.4829, 91.7774], "Habiganj": [24.3749, 91.4155], "Sunamganj": [25.0658, 91.3950]
+  };
+
+  function setStatus(message, error = false) {
+    $("status").textContent = message;
+    $("status").style.color = error ? "#c62828" : "#5b7366";
+  }
+
+  function weatherInfo(code) {
+    if (code === 0) return ["☀️", "পরিষ্কার আকাশ"];
+    if (code <= 2) return ["🌤️", "আংশিক মেঘলা"];
+    if (code === 3) return ["☁️", "মেঘলা আকাশ"];
+    if (code <= 48) return ["🌫️", "কুয়াশা"];
+    if (code <= 57) return ["🌦️", "গুঁড়ি গুঁড়ি বৃষ্টি"];
+    if (code <= 67) return ["🌧️", "বৃষ্টি"];
+    if (code <= 77) return ["❄️", "তুষারপাত"];
+    if (code <= 82) return ["🌧️", "বৃষ্টির ঝাপটা"];
+    if (code <= 86) return ["🌨️", "তুষার ঝাপটা"];
+    return ["⛈️", "বজ্রঝড়"];
+  }
+
+  function timeFormat(value) { return !value ? "--" : value.slice(11, 16); }
+
+  async function searchCity() {
+    const name = $("search").value.trim();
+    if (!name) return setStatus("একটি জেলা বা শহরের নাম লিখুন。", true);
+    const key = Object.keys(districts).find(k => k.toLowerCase() === name.toLowerCase());
+    if (key) { lat = districts[key][0]; lon = districts[key][1]; city = key; loadWeather(); return; }
+    try {
+      setStatus("স্থান অনুসন্ধান হচ্ছে...");
+      const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=bn&format=json`);
+      if (!res.ok) throw Error("স্থান অনুসন্ধান ব্যর্থ হয়েছে।");
+      const data = await res.json();
+      if (!data.results?.length) throw Error("স্থান পাওয়া যায়নি।");
+      lat = data.results[0].latitude; lon = data.results[0].longitude; city = data.results[0].name;
+      loadWeather();
+    } catch (err) { setStatus(err.message, true); }
+  }
+
+  function myLocation() {
+    if (!navigator.geolocation) return setStatus("GPS সুবিধা নেই。", true);
+    setStatus("অবস্থান খোঁজা হচ্ছে...");
+    navigator.geolocation.getCurrentPosition(pos => {
+      lat = pos.coords.latitude; lon = pos.coords.longitude; city = "আপনার বর্তমান অবস্থান";
+      loadWeather();
+    }, () => setStatus("লোকেশন অনুমতি পাওয়া যায়নি。", true), { enableHighAccuracy: true, timeout: 12000 });
+  }
+
+  async function loadWeather(force = false) {
+    const reqId = ++requestNumber, key = `${lat.toFixed(3)},${lon.toFixed(3)}`;
+    if (!force && cache[key] && Date.now() - cache[key].time < 300000) {
+      renderWeather(cache[key].data); setStatus("সংরক্ষিত তথ্য দেখানো হচ্ছে।"); return;
     }
-});
+    setStatus("লাইভ আবহাওয়া সংগ্রহ হচ্ছে...");
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    try {
+      const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max,sunrise,sunset&timezone=auto&forecast_days=5`, { signal: controller.signal });
+      if (!res.ok) throw Error("সারভার সংযোগ ব্যর্থ।");
+      const data = await res.json();
+      if (!data.current || !data.daily || reqId !== requestNumber) return;
+      cache[key] = { data, time: Date.now() }; renderWeather(data);
+      try { localStorage.setItem("weatherBDLast", JSON.stringify({ data, city, lat, lon, time: Date.now() })); } catch(e){}
+      setStatus("সফলভাবে আপডেট হয়েছে।"); $("updated").textContent = "সর্বশেষ আপডেট: " + new Date().toLocaleString("bn-BD");
+    } catch(err) {
+      if (reqId === requestNumber) setStatus(err.name === "AbortError" ? "সময় শেষ হয়েছে।" : err.message, true);
+    } finally { clearTimeout(timeout); }
+  }
 
-loadWeather();
+  function renderWeather(data) {
+    const c = data.current, d = data.daily;
+    const [icon, desc] = weatherInfo(c.weather_code);
+    $("place").textContent = city + ", বাংলাদেশ"; $("weatherIcon").textContent = icon;
+    $("temperature").textContent = Math.round(c.temperature_2m) + "°C"; $("condition").textContent = desc;
+    $("feels").textContent = "অনুভূত তাপমাত্রা: " + Math.round(c.apparent_temperature) + "°C";
+    $("humidity").textContent = c.relative_humidity_2m + "%"; $("wind").textContent = c.wind_speed_10m + " km/h";
+    $("rain").textContent = c.precipitation + " mm"; $("uv").textContent = d.uv_index_max[0];
+    $("sunrise").textContent = timeFormat(d.sunrise[0]); $("sunset").textContent = timeFormat(d.sunset[0]);
+    renderForecast(d); agricultureAdvice(c, d); weatherAlert(c, d);
+  }
+
+  function renderForecast(data) {
+    const container = $("forecast"); container.innerHTML = "";
+    data.time.forEach((date, i) => {
+      const [icon] = weatherInfo(data.weather_code[i]);
+      const item = document.createElement("div"); item.className = "day";
+      const day = document.createElement("strong");
+      day.textContent = i === 0 ? "আজ" : new Date(date + "T12:00:00").toLocaleDateString("bn-BD", { weekday: "short" });
+      const symbol = document.createElement("b"); symbol.textContent = icon;
+      const temp = document.createElement("div");
+      temp.textContent = Math.round(data.temperature_2m_max[i]) + "° / " + Math.round(data.temperature_2m_min[i]) + "°";
+      const rain = document.createElement("div"); rain.textContent = "🌧️ " + data.precipitation_probability_max[i] + "%";
+      item.append(day, symbol, temp, rain); container.appendChild(item);
+    });
+  }
+
+  function agricultureAdvice(c, d) {
+    const advice = [], rainProb = d.precipitation_probability_max[0];
+    if (c.temperature_2m >= 35) advice.push("তাপমাত্রা বেশি। সেচ দিন।");
+    else if (c.temperature_2m <= 12) advice.push("ঠান্ডা বেশি। চারা রক্ষায় ছাউনি ব্যবহার করুন।");
+    if (c.relative_humidity_2m >= 80) advice.push("আর্দ্রতা বেশি। ছত্রাক রোগ পর্যবেক্ষণ করুন।");
+    if (c.precipitation > 0) advice.push("বৃষ্টি হচ্ছে। পানি নিষ্কাশনের ব্যবস্থা রাখুন।");
+    if (rainProb >= 60) advice.push("বৃষ্টির সম্ভাবনা বেশি। সার প্রয়োগ স্থগিত রাখুন।");
+    if (c.wind_speed_10m >= 25) advice.push("বাতাস বেশি। খুঁটি দিয়ে সুরক্ষা দিন।");
+    if (!advice.length) advice.push("আবহাওয়া স্বাভাবিক। নিয়মিত জমি পর্যবেক্ষণ করুন।");
+
+    let harvestMsg = "✅ ফসল কাটার জন্য আবহাওয়া অনুকূল।", harvestColor = "#087e4b";
+    if (c.precipitation > 0 || c.weather_code >= 51) {
+      harvestMsg = " আবহাওয়া। ফসল কাটা থেকে বিরত থাকুন।"; harvestColor = "#c62828";
+    } else if (rainProb >= 50) {
+      harvestMsg = `⚠️ বৃষ্টির সম্ভাবনা (${rainProb}%)। ফসল দ্রুত নিরাপদ স্থানে রাখুন।`; harvestColor = "#d97706";
+    } else if (c.wind_speed_10m >= 25) {
+      harvestMsg = "⚠️ বাতাসের গতি বেশি। ফসল কাটায় সতর্কতা অবলম্বন করুন।"; harvestColor = "#d97706";
+    }
+
+    const canSow = c.wind_speed_10m < 20 && c.precipitation === 0 && rainProb < 60;
+    const sowMsg = canSow ? "✅ বীজ বপন ও চারা রোপণ উপযোগী。" : "⚠️ ঝোড়ো বাতাস বা বৃষ্টির আশঙ্কায় বীজ বপন স্থগিত রাখুন।";
+    const canSpray = c.wind_speed_10m < 18 && c.precipitation === 0 && rainProb < 40;
+    const sprayMsg = canSpray ? "✅ বালাইনাশক স্প্রে করার জন্য আবহাওয়া উপযুক্ত。" : "⚠️ বাতাস বা বৃষ্টির কারণে বালাইনাশক ছিটাবেন না।";
+
+     $("agriAdvice").textContent = advice.join(" ");
+    $("agriHarvest").textContent = harvestMsg; $("agriHarvest").style.color = harvestColor;
+    $("sowMsg").textContent = sowMsg; $("sowMsg").style.color = canSow ? "#087e4b" : "#d97706";
+    $("sprayMsg").textContent = sprayMsg; $("sprayMsg").style.color = canSpray ? "#087e4b" : "#d97706";
+    $("agriRain").textContent = "🌧️ আজ বৃষ্টির সম্ভাবনা: " + rainProb + "%";
+  }
+
+  function weatherAlert(c, d) {
+    const alerts = [];
+    if (c.temperature_2m >= 38) alerts.push("🔥 তীব্র তাপপ্রবাহ। রোদে সতর্ক থাকুন।");
+    if (c.wind_speed_10m >= 35) alerts.push("💨 দমকা হাওয়া বইছে। সতর্ক থাকুন।");
+    if (d.precipitation_probability_max[0] >= 80) alerts.push("🌧️ ভারী বর্ষণের সম্ভাবনা।");
+    if (c.weather_code >= 95) alerts.push("⛈️ বজ্রঝড়ের আশঙ্কা। নিরাপদ স্থানে থাকুন।");
+    $("alert").textContent = alerts.length ? alerts.join(" ") : "✅ কোনো বড় দুর্যোগ সতর্কতা নেই।";
+  }
+
+  window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); installPrompt = e; $("installCard").hidden = false; });
+  $("installBtn").addEventListener("click", async () => {
+    if (!installPrompt) return; installPrompt.prompt(); await installPrompt.userChoice; installPrompt = null; $("installCard").hidden = true;
+  });
+
+  $("searchBtn").addEventListener("click", searchCity);
+  $("locationBtn").addEventListener("click", myLocation);
+  $("refreshBtn").addEventListener("click", () => loadWeather(true));
+  $("search").addEventListener("keypress", (e) => { if (e.key === "Enter") searchCity(); });
+
+  try {
+    const saved = JSON.parse(localStorage.getItem("weatherBDLast"));
+    if (saved?.data) { city = saved.city; lat = saved.lat; lon = saved.lon; renderWeather(saved.data); }
+  } catch(e){}
+
+  loadWeather();
 </script>
-
-
 </body>
- </html>
+</html>
