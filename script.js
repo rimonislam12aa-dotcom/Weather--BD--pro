@@ -40,6 +40,12 @@ if (navigator.geolocation) {
         } else if (windSpeed > 8) {
           harvestingText = "❌ বাতাসের গতি বেশি থাকায় ফসল কাটা ঝুঁকিপূর্ণ হতে পারে।";
         }
+        // --- বীজ বপন ও কীটনাশক ছিটানোর লজিক ---
+let sowMsg = windSpeed < 20 && !weatherCondition.includes('rain') ? "✅বীজ বপনের জন্য আবহাওয়া অনুকূল。" : "⚠️ বাতাস বা বৃষ্টির কারণে বীজ বপন স্থগিত রাখুন。";
+let sprayMsg = windSpeed < 25 && !weatherCondition.includes('rain') ? "✅ কীটনাশক প্রয়োগের জন্য আবহাওয়া অনুকূল。" : "⚠️ বেশি বাতাস বা বৃষ্টিতে কীটনাশক ছিটাবেন না。";
+
+document.getElementById("sowMsg").textContent = sowMsg;
+document.getElementById("sprayMsg").textContent = sprayMsg;
 
         // কনসোলে বা আপনার ওয়েবসাইটের UI-তে দেখানোর জন্য
         console.log("পরামর্শ:", advisoryText);
