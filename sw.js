@@ -1,5 +1,5 @@
 importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
-const CACHE_NAME = "weather-bd-v3";
+const CACHE_NAME = "weather-bd-v4";
 
 const FILES = [
   "./",
