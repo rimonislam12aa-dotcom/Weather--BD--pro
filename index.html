@@ -19,6 +19,8 @@
       --text: #17352a;
       --muted: #5b7366;
       --border: #d5e4dc;
+      --danger: #c62828;
+      --warning: #d97706;
     }
     * { box-sizing: border-box; }
     body {
@@ -96,8 +98,7 @@
   </style>
 </head>
 <body>
-
-<header>
+  <header>
   <h1>🌤️ Weather BD Pro</h1>
   <p>বাংলাদেশের লাইভ আবহাওয়া ও স্মার্ট কৃষি পরামর্শ</p>
 </header>
@@ -188,8 +189,8 @@
 </footer>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getMessaging, getToken, onMessage, isSupported } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCxINWdKD9oKycRP4nBuhe82fXspjYTz4M",
@@ -201,78 +202,123 @@
     measurementId: "G-YL2BNLF6Z9"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const messaging = getMessaging(app);
+  // Initialize Firebase safely
+  const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+  let messaging = null;
+
   const publicVapidKey = "BEA6015vOP9V_NiSLj22w0Rwesk5ycLfw1MsmSz8Q_ZzIbNaXioZZSVKRnw4Mw6_vMDBoSzMVHax3oCb-2b62ok";
 
   let swRegistration = null;
   let isSubscribed = false;
 
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./sw.js")
-      .then((reg) => {
-        swRegistration = reg;
+  async initMessaging();
+
+  async function initMessaging() {
+    if ("serviceWorker" in navigator) {
+      try {
+        swRegistration = await navigator.serviceWorker.register("./sw.js", { scope: "./" });
+        setupForegroundMessageHandler();
+        checkExistingSubscription();
+      } catch (err) {
+        console.error("Service Worker registration failed:", err);
+        setStatus("সার্ভিস ওয়ার্কার সেটআপ ব্যর্থ হয়েছে।", true);
+      }
+    }
+  }
+
+  function setupForegroundMessageHandler() {
+    isSupported().then(supported => {
+      if (supported) {
+        messaging = getMessaging(app);
         onMessage(messaging, (payload) => {
           if (Notification.permission === "granted" && payload.notification) {
+            // Show custom notification even if app is in foreground
             new Notification(payload.notification.title, {
               body: payload.notification.body,
-              icon: "./icons/icon.svg"
+              icon: "./icons/icon.svg",
+              badge: "./icons/icon.svg",
+              data: { url: window.location.href }
             });
           }
         });
-      })
-      .catch((err) => console.error("Service Worker registration failed:", err));
+      }
+    }).catch(e => console.error("Messaging not supported", e));
+  }
+
+  async function checkExistingSubscription() {
+    try {
+      const storedToken = localStorage.getItem("fcmToken");
+      if (storedToken) {
+        isSubscribed = true;
+        updateUI(true, "✅ সফলভাবে পুশ নোটিফিকেশন চালু আছে।");
+      }
+    } catch(e) {
+      console.error("Error reading token from storage", e);
+    }
+  }
+
+  function updateUI(subscribed, message, isError = false) {
+    const btn = document.getElementById("pushBtn");
+    const statusP = document.getElementById("notificationStatus");
+    if(!btn || !statusP) return;
+
+    if (subscribed) {
+      btn.textContent = "সাবস্ক্রাইবড";
+      btn.disabled = true;
+      statusP.style.color = "#087e4b";
+    } else {
+      btn.textContent = "পুশ নোটিফিকেশন চালু করুন";
+      btn.disabled = false;
+      statusP.style.color = isError ? "var(--danger)" : "var(--muted)";
+    }
+    statusP.textContent = message;
   }
 
   async function togglePushSubscription() {
-    const btn = document.getElementById("pushBtn");
     const statusP = document.getElementById("notificationStatus");
 
     if (isSubscribed) {
-      statusP.textContent = "ইতিমধ্যে সাবস্ক্রাইব করা আছে।";
+      updateUI(true, "ইতিমধ্যে সাবস্ক্রাইব করা আছে।");
       return;
     }
 
     if (!("Notification" in window) || !("serviceWorker" in navigator)) {
-      statusP.style.color = "#c62828";
-      statusP.textContent = "আপনার ব্রাউজার পুশ নোটিফিকেশন সমর্থন করে না।";
+      updateUI(false, "আপনার ব্রাউজার পুশ নোটিফিকেশন সমর্থন করে না।", true);
       return;
     }
 
     try {
-      btn.disabled = true;
-      statusP.style.color = "#5b7366";
-      statusP.textContent = "অনুমতি চাওয়া হচ্ছে...";
-
+      updateUI(false, "অনুমতি চাওয়া হচ্ছে...");
       const permission = await Notification.requestPermission();
+      
       if (permission !== "granted") {
-        btn.disabled = false;
-        statusP.style.color = "#c62828";
-        statusP.textContent = "নোটিফিকেশনের অনুমতি দেওয়া হয়নি।";
+        updateUI(false, "নোটিফিকেশনের অনুমতি দেওয়া হয়নি।", true);
         return;
       }
 
-      const registration = swRegistration || await navigator.serviceWorker.ready;
+      const supported = await isSupported();
+      if (!supported) {
+        updateUI(false, "এই ডিভাইসে মেসেজিং সিস্টেম কাজ করছে না।", true);
+        return;
+      }
+
+      messaging = messaging || getMessaging(app);
       const token = await getToken(messaging, {
         vapidKey: publicVapidKey,
-        serviceWorkerRegistration: registration
+        serviceWorkerRegistration: swRegistration
       });
 
       if (token) {
         localStorage.setItem("fcmToken", token);
-        statusP.style.color = "#087e4b";
-        statusP.textContent = "✅ সফলভাবে পুশ নোটিফিকেশন চালু হয়েছে!";
-        btn.textContent = "সাবস্ক্রাইবড";
         isSubscribed = true;
+        updateUI(true, "✅ সফলভাবে পুশ নোটিফিকেশন চালু হয়েছে!");
+        // Here you would typically send the token to your backend server
       } else {
-        btn.disabled = false;
-        statusP.style.color = "#c62828";
-        statusP.textContent = "টোকেন পাওয়া যায়নি। আবার চেষ্টা করুন।";
+        updateUI(false, "টোকেন পাওয়া যায়নি। আবার চেষ্টা করুন।", true);
       }
     } catch (error) {
-      btn.disabled = false;
-      statusP.style.color = "#c62828";
-      statusP.textContent = "ত্রুটি ঘটেছে: " + error.message;
+      console.error("Subscription error:", error);
+      updateUI(false, "ত্রুটি ঘটেছে: " + error.message, true);
     }
   }
 
@@ -296,8 +342,11 @@
   };
 
   function setStatus(message, error = false) {
-    $("status").textContent = message;
-    $("status").style.color = error ? "#c62828" : "#5b7366";
+    const el = $("status");
+    if(el) {
+      el.textContent = message;
+      el.style.color = error ? "var(--danger)" : "var(--muted)";
+    }
   }
 
   function weatherInfo(code) {
@@ -322,13 +371,16 @@
     if (key) { lat = districts[key][0]; lon = districts[key][1]; city = key; loadWeather(); return; }
     try {
       setStatus("স্থান অনুসন্ধান হচ্ছে...");
-      const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=bn&format=json`);
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
+      const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=bn&format=json`, { signal: controller.signal });
+      clearTimeout(timeout);
       if (!res.ok) throw Error("স্থান অনুসন্ধান ব্যর্থ হয়েছে।");
       const data = await res.json();
       if (!data.results?.length) throw Error("স্থান পাওয়া যায়নি।");
       lat = data.results[0].latitude; lon = data.results[0].longitude; city = data.results[0].name;
       loadWeather();
-    } catch (err) { setStatus(err.message, true); }
+    } catch (err) { setStatus(err.name === "AbortError" ? "সার্ভার রেসপন্স সময় শেষ।" : err.message, true); }
   }
 
   function myLocation() {
@@ -337,7 +389,12 @@
     navigator.geolocation.getCurrentPosition(pos => {
       lat = pos.coords.latitude; lon = pos.coords.longitude; city = "আপনার বর্তমান অবস্থান";
       loadWeather();
-    }, () => setStatus("লোকেশন অনুমতি পাওয়া যায়নি。", true), { enableHighAccuracy: true, timeout: 12000 });
+    }, (err) => {
+      let msg = "লোকেশন অনুমতি পাওয়া যায়নি।";
+      if(err.code === 1) msg = "লোকেশন পারমিশন ব্লকড।";
+      if(err.code === 2) msg = "লোকেশন ডিটেক্ট করা যায়নি।";
+      setStatus(msg, true);
+    }, { enableHighAccuracy: true, timeout: 10000 });
   }
 
   async function loadWeather(force = false) {
@@ -347,17 +404,25 @@
     }
     setStatus("লাইভ আবহাওয়া সংগ্রহ হচ্ছে...");
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 12000);
+    const timeout = setTimeout(() => controller.abort(), 10000);
     try {
       const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max,sunrise,sunset&timezone=auto&forecast_days=5`, { signal: controller.signal });
-      if (!res.ok) throw Error("সারভার সংযোগ ব্যর্থ।");
+      if (!res.ok) throw Error("আবহাওয়া সার্ভার ডাউন অথবা নেটওয়ার্ক সমস্যা।");
       const data = await res.json();
-      if (!data.current || !data.daily || reqId !== requestNumber) return;
+      if (reqId !== requestNumber) return;
+      if (!data.current || !data.daily) throw Error("ভুল ডেটা ফরম্যাট পাওয়া গেছে।");
       cache[key] = { data, time: Date.now() }; renderWeather(data);
       try { localStorage.setItem("weatherBDLast", JSON.stringify({ data, city, lat, lon, time: Date.now() })); } catch(e){}
-      setStatus("সফলভাবে আপডেট হয়েছে।"); $("updated").textContent = "সর্বশেষ আপডেট: " + new Date().toLocaleString("bn-BD");
+      setStatus("সফলভাবে আপডেট হয়েছে।"); $("updated").textContent = "সর্বশেষ আপডেট: " + new Date().toLocaleTimeString("bn-BD");
     } catch(err) {
-      if (reqId === requestNumber) setStatus(err.name === "AbortError" ? "সময় শেষ হয়েছে।" : err.message, true);
+      if (reqId === requestNumber) {
+        setStatus(err.name === "AbortError" ? "সার্ভার রেসপন্স টাইম আউট।" : err.message, true);
+        // Try fallback to cache if available
+        if(cache[key]) {
+          renderWeather(cache[key].data);
+          setStatus("অফলাইন/পুরানো ডেটা প্রদর্শিত হচ্ছে।", true);
+        }
+      }
     } finally { clearTimeout(timeout); }
   }
 
@@ -398,24 +463,24 @@
     if (c.wind_speed_10m >= 25) advice.push("বাতাস বেশি। খুঁটি দিয়ে সুরক্ষা দিন।");
     if (!advice.length) advice.push("আবহাওয়া স্বাভাবিক। নিয়মিত জমি পর্যবেক্ষণ করুন।");
 
-    let harvestMsg = "✅ ফসল কাটার জন্য আবহাওয়া অনুকূল।", harvestColor = "#087e4b";
+    let harvestMsg = "✅ ফসল কাটার জন্য আবহাওয়া অনুকূল।", harvestColor = "var(--primary)";
     if (c.precipitation > 0 || c.weather_code >= 51) {
-      harvestMsg = " আবহাওয়া। ফসল কাটা থেকে বিরত থাকুন।"; harvestColor = "#c62828";
+      harvestMsg = "⚠️ বৃষ্টি বা প্রতিকূল আবহাওয়া। ফসল কাটা থেকে বিরত থাকুন।"; harvestColor = "var(--danger)";
     } else if (rainProb >= 50) {
-      harvestMsg = `⚠️ বৃষ্টির সম্ভাবনা (${rainProb}%)। ফসল দ্রুত নিরাপদ স্থানে রাখুন।`; harvestColor = "#d97706";
+      harvestMsg = `⚠️ বৃষ্টির সম্ভাবনা (${rainProb}%)। ফসল দ্রুত নিরাপদ স্থানে রাখুন।`; harvestColor = "var(--warning)";
     } else if (c.wind_speed_10m >= 25) {
-      harvestMsg = "⚠️ বাতাসের গতি বেশি। ফসল কাটায় সতর্কতা অবলম্বন করুন।"; harvestColor = "#d97706";
+      harvestMsg = "⚠️ বাতাসের গতি বেশি। ফসল কাটায় সতর্কতা অবলম্বন করুন।"; harvestColor = "var(--warning)";
     }
 
     const canSow = c.wind_speed_10m < 20 && c.precipitation === 0 && rainProb < 60;
     const sowMsg = canSow ? "✅ বীজ বপন ও চারা রোপণ উপযোগী。" : "⚠️ ঝোড়ো বাতাস বা বৃষ্টির আশঙ্কায় বীজ বপন স্থগিত রাখুন।";
     const canSpray = c.wind_speed_10m < 18 && c.precipitation === 0 && rainProb < 40;
     const sprayMsg = canSpray ? "✅ বালাইনাশক স্প্রে করার জন্য আবহাওয়া উপযুক্ত。" : "⚠️ বাতাস বা বৃষ্টির কারণে বালাইনাশক ছিটাবেন না।";
-
-     $("agriAdvice").textContent = advice.join(" ");
+    
+    $("agriAdvice").textContent = advice.join(" ");
     $("agriHarvest").textContent = harvestMsg; $("agriHarvest").style.color = harvestColor;
-    $("sowMsg").textContent = sowMsg; $("sowMsg").style.color = canSow ? "#087e4b" : "#d97706";
-    $("sprayMsg").textContent = sprayMsg; $("sprayMsg").style.color = canSpray ? "#087e4b" : "#d97706";
+    $("sowMsg").textContent = sowMsg; $("sowMsg").style.color = canSow ? "var(--primary)" : "var(--warning)";
+    $("sprayMsg").textContent = sprayMsg; $("sprayMsg").style.color = canSpray ? "var(--primary)" : "var(--warning)";
     $("agriRain").textContent = "🌧️ আজ বৃষ্টির সম্ভাবনা: " + rainProb + "%";
   }
 
@@ -424,24 +489,51 @@
     if (c.temperature_2m >= 38) alerts.push("🔥 তীব্র তাপপ্রবাহ। রোদে সতর্ক থাকুন।");
     if (c.wind_speed_10m >= 35) alerts.push("💨 দমকা হাওয়া বইছে। সতর্ক থাকুন।");
     if (d.precipitation_probability_max[0] >= 80) alerts.push("🌧️ ভারী বর্ষণের সম্ভাবনা।");
-    if (c.weather_code >= 95) alerts.push("⛈️ বজ্রঝড়ের আশঙ্কা। নিরাপদ স্থানে থাকুন।");
+    if (c.weather_code >= 95) alerts.push("⛈️ বজ্রঝড়ের আশঙ্কা। নিরাপদ স্থানে থাকুন።");
     $("alert").textContent = alerts.length ? alerts.join(" ") : "✅ কোনো বড় দুর্যোগ সতর্কতা নেই।";
   }
 
-  window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); installPrompt = e; $("installCard").hidden = false; });
-  $("installBtn").addEventListener("click", async () => {
-    if (!installPrompt) return; installPrompt.prompt(); await installPrompt.userChoice; installPrompt = null; $("installCard").hidden = true;
+  // Install PWA logic
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    installPrompt = e;
+    const insCard = $("installCard");
+    if(insCard) insCard.hidden = false;
   });
+
+  const instBtn = $("installBtn");
+  if(instBtn) {
+    instBtn.addEventListener("click", async () => {
+      if (!installPrompt) return;
+      installPrompt.prompt();
+      const { outcome } = await installPrompt.userChoice;
+      if (outcome === 'accepted') installPrompt = null;
+      const insCard = $("installCard");
+      if(insCard) insCard.hidden = true;
+    });
+  }
 
   $("searchBtn").addEventListener("click", searchCity);
   $("locationBtn").addEventListener("click", myLocation);
   $("refreshBtn").addEventListener("click", () => loadWeather(true));
-  $("search").addEventListener("keypress", (e) => { if (e.key === "Enter") searchCity(); });
+  const searchInput = $("search");
+  if(searchInput) {
+    searchInput.addEventListener("keypress", (e) => { if (e.key === "Enter") searchCity(); });
+  }
 
+  // Initial load
   try {
-    const saved = JSON.parse(localStorage.getItem("weatherBDLast"));
-    if (saved?.data) { city = saved.city; lat = saved.lat; lon = saved.lon; renderWeather(saved.data); }
-  } catch(e){}
+    const saved = localStorage.getItem("weatherBDLast");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed?.data) {
+        city = parsed.city; lat = parsed.lat; lon = parsed.lon;
+        renderWeather(parsed.data);
+      }
+    }
+  } catch(e){
+    console.error("Failed to load from storage", e);
+  }
 
   loadWeather();
 </script>
