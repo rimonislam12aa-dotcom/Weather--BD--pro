@@ -555,7 +555,7 @@ function agricultureAdvice(c,d){
  let harvestColor = "#087e4b"; // সবুজ রঙ
 
  if (c.precipitation > 0 || c.weather_code >= 51) {
-   harvestMsg = "❌ এখন বৃষ্টি বা ঝড়ো আবহাওয়া চলছে, ফসল কাটা থেকে বিরত থাকুন।";
+   harvestMsg = "❌ এখন বৃষ্টি বা ঝড়ো আবহাওয়া চলছে, ফসল কাটা , কীটনাশক ছিটানো এবং বীজ বপন থেকে বিরত থাকুন।";
    harvestColor = "#c62828"; // লাল রঙ
  } else if (d.precipitation_probability_max[0] >= 50) {
    harvestMsg = "⚠️ আজ বৃষ্টির সম্ভাবনা বেশি (" + d.precipitation_probability_max[0] + "%)। পাকা ফসল দ্রুত কেটে নিরাপদ স্থানে রাখুন বা সতর্ক থাকুন।";
@@ -565,6 +565,9 @@ function agricultureAdvice(c,d){
    harvestColor = "#d97706";
 if (c.wind_speed_10m >= 25 || c.precipitation > 0) {
    advice.push("⚠️ বাতাসের গতিবেগ বেশি বা বৃষ্টির সম্ভাবনা থাকায় এই মুহূর্তে কীটনাশক ছিটানো থেকে বিরত থাকুন।");
+  if (c.wind_speed_10m >= 20 || c.precipitation > 0) {
+   advice.push("⚠️ বীজ বোনার জন্য আবহাওয়া অনুকূল নয়। বেশি বাতাস বা বৃষ্টির সম্ভাবনা থাকলে বীজ বপন থেকে বিরত থাকুন۔");
+  }
 }
  }
 
