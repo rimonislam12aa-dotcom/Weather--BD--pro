@@ -553,6 +553,9 @@ function agricultureAdvice(c,d){
  // --- ফসল কাটার উপযুক্ততা যাচাই (Crop Harvesting Logic) ---
  let harvestMsg = "✅ ফসল কাটার জন্য আবহাওয়া অনুকূল রয়েছে।";
  let harvestColor = "#087e4b"; // সবুজ রঙ
+ let sowMsg = c.wind_speed_10m < 20 && c.precipitation == 0 ? "✅  বীজ বপনের জন্য আবহাওয়া অনুকূল।" : "⚠️ বাতাস বা বৃষ্টির কারণে বীজ বপন স্থগিত রাখুন।";
+let sprayMsg = c.wind_speed_10m < 25 && c.precipitation == 0 ? "✅ কীটনাশক প্রয়োগের জন্য আবহাওয়া অনুকূল।" : "⚠️ বেশি বাতাস বা বৃষ্টিতে কীটনাশক ছিটাবেন না।";
+ 
 
  if (c.precipitation > 0 || c.weather_code >= 51) {
    harvestMsg = "❌ এখন বৃষ্টি বা ঝড়ো আবহাওয়া চলছে, ফসল কাটা , কীটনাশক ছিটানো এবং বীজ বপন থেকে বিরত থাকুন।";
@@ -564,9 +567,7 @@ function agricultureAdvice(c,d){
    harvestMsg = "⚠️ বাতাসের গতিবেগ বেশি (" + c.wind_speed_10m + " km/h), ফসল কাটায় সতর্কতা অবলম্বন করুন।";
    harvestColor = "#d97706";
 if (c.wind_speed_10m >= 25 || c.precipitation > 0) {
- let sowMsg = c.wind_speed_10m < 20 && c.precipitation == 0 ? "✔️ বীজ বপনের জন্য আবহাওয়া অনুকূল।" : "⚠️ বাতাস বা বৃষ্টির কারণে বীজ বপন স্থগিত রাখুন।";
-let sprayMsg = c.wind_speed_10m < 25 && c.precipitation == 0 ? "✔️ কীটনাশক প্রয়োগের জন্য আবহাওয়া অনুকূল।" : "⚠️ বেশি বাতাস বা বৃষ্টিতে কীটনাশক ছিটাবেন না।";
-
+ 
 document.getElementById("sowMsg").textContent = sowMsg;
 document.getElementById("sprayMsg").textContent = sprayMsg;
    advice.push("⚠️ বাতাসের গতিবেগ বেশি বা বৃষ্টির সম্ভাবনা থাকায় এই মুহূর্তে কীটনাশক ছিটানো থেকে বিরত থাকুন।");
