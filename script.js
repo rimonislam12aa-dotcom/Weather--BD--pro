@@ -3,14 +3,7 @@ if (navigator.geolocation) {
     const lat = position.coords.latitude;
     const lon = position.coords.longitude;
     console.log("Latitude:", lat, "Longitude:", lon);
-    const apiKey = 'f91f62704c8f45d5708d04d54d7a636e';
-const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition((position) => {
-    const lat = position.coords.latitude;
-    const lon = position.coords.longitude;
-    console.log("Latitude:", lat, "Longitude:", lon);
+    
     const apiKey = 'f91f62704c8f45d5708d04d54d7a636e';
     const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
 
@@ -40,27 +33,33 @@ if (navigator.geolocation) {
         } else if (windSpeed > 8) {
           harvestingText = "❌ বাতাসের গতি বেশি থাকায় ফসল কাটা ঝুঁকিপূর্ণ হতে পারে।";
         }
-        // --- বীজ বপন ও কীটনাশক ছিটানোর লজিক ---
-let sowMsg = windSpeed < 20 && !weatherCondition.includes('rain') ? "✅বীজ বপনের জন্য আবহাওয়া অনুকূল。" : "⚠️ বাতাস বা বৃষ্টির কারণে বীজ বপন স্থগিত রাখুন。";
-let sprayMsg = windSpeed < 25 && !weatherCondition.includes('rain') ? "✅ কীটনাশক প্রয়োগের জন্য আবহাওয়া অনুকূল。" : "⚠️ বেশি বাতাস বা বৃষ্টিতে কীটনাশক ছিটাবেন না。";
 
-document.getElementById("sowMsg").textContent = sowMsg;
-document.getElementById("sprayMsg").textContent = sprayMsg;
+        // ৩. বীজ বপন ও কীটনাশক ছিটানোর লজিক
+        let sowMsg = (windSpeed < 20 && !weatherCondition.includes('rain')) ? "✅ বীজ বপনের জন্য আবহাওয়া অনুকূল।" : "⚠️ বাতাস বা বৃষ্টির কারণে বীজ বপন স্থগিত রাখুন।";
+        let sprayMsg = (windSpeed < 25 && !weatherCondition.includes('rain')) ? "✅ কীটনাশক প্রয়োগের জন্য আবহাওয়া অনুকূল।" : "⚠️ বেশি বাতাস বা বৃষ্টিতে কীটনাশক ছিটাবেন না।";
 
-        // কনসোলে বা আপনার ওয়েবসাইটের UI-তে দেখানোর জন্য
+        // কনসোলে প্রিন্ট
         console.log("পরামর্শ:", advisoryText);
         console.log("ফসল কাটার স্ট্যাটাস:", harvestingText);
 
-        // আপনি চাইলে এগুলো আপনার ওয়েবসাইটের নির্দিষ্ট HTML এলিমেন্টে বসাতে পারেন:
-        // document.getElementById('advisory-box').innerText = advisoryText;
-        // document.getElementById('harvest-box').innerText = harvestingText;
+        // HTML এলিমেন্টে ডেটা বসানো (আপনার আইডিগুলোর সাথে মিলিয়ে এগুলো ব্যবহার করতে পারেন)
+        // const advisoryBox = document.getElementById('advisory-box');
+        // if (advisoryBox) advisoryBox.innerText = advisoryText;
+
+        // const harvestBox = document.getElementById('harvest-box');
+        // if (harvestBox) harvestBox.innerText = harvestingText;
+
+        const sowElement = document.getElementById("sowMsg");
+        if (sowElement) sowElement.textContent = sowMsg;
+
+        const sprayElement = document.getElementById("sprayMsg");
+        if (sprayElement) sprayElement.textContent = sprayMsg;
 
       })
-      .catch(error => console.log('Error:', error));
+      .catch(error => console.log('API Fetch Error:', error));
+  }, (error) => {
+    console.log("Geolocation permission denied or error:", error);
   });
 } else {
   console.log("Geolocation is not supported by this browser.");
 }
-} else {
-  console.log("Geolocation is not supported by this browser.");
-                                           }
