@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <script> window.OneSignalDeferred = window.OneSignalDeferred || []; OneSignalDeferred.push(function(OneSignal) { OneSignal.init({ appId: "33b59ea9-7c1a-4e3e-9002-713b9e2e76e5", }); }); </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#087e4b">
-  <meta name="description" content="Weather BD Pro - বাংলাদেশের লাইভ আবহাওয়া ও স্মার্ট কৃষি পরামর্শ">
-  <title>Weather BD Pro | লাইভ আবহাওয়া ও স্মার্ট কৃষি</title>
+  <meta name="description" content="Weather BD Pro - বাংলাদেশের লাইভ আবহাওয়া ও স্মার্ট কৃষি পরামর্শ">
+  <!-- Google Search Console যাচাইয়ের ট্যাগ এখানে বসান, যেমন:
+  <meta name="google-site-verification" content="আপনার-কোড"> -->
+  <title>Weather BD Pro | লাইভ আবহাওয়া ও স্মার্ট কৃষি</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="./icons/icon.svg">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
   <style>
     :root {
       --primary: #087e4b;
@@ -47,6 +48,7 @@
       box-shadow: 0 4px 16px rgba(23, 53, 42, 0.06);
       border: 1px solid rgba(213, 228, 220, 0.6);
     }
+    .card[hidden] { display: none; }
     h2 { font-size: 18px; margin: 0 0 14px; display: flex; align-items: center; gap: 6px; }
     input, button {
       width: 100%;
@@ -84,7 +86,9 @@
     .agri { background: #e6f7eb; border-left: 5px solid #159447; }
     .agri h2 { color: var(--primary); }
     .agri-item { background: rgba(255, 255, 255, 0.75); padding: 10px 12px; border-radius: 8px; margin: 8px 0; font-size: 14.5px; }
+    .agri-item:empty { display: none; }
     .notice { background: #fff6df; border-left: 5px solid #e3a325; }
+    .disclaimer { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
     #status { font-size: 13.5px; color: var(--muted); margin: 8px 0 0; }
     #notificationStatus, #updated { font-size: 13.5px; margin: 8px 0 0; color: var(--muted); }
     footer { text-align: center; padding: 24px 16px; color: var(--muted); font-size: 13px; }
@@ -100,13 +104,13 @@
 
 <header>
   <h1>🌤️ Weather BD Pro</h1>
-  <p>বাংলাদেশের লাইভ আবহাওয়া ও স্মার্ট কৃষি পরামর্শ</p>
+  <p>বাংলাদেশের লাইভ আবহাওয়া ও স্মার্ট কৃষি পরামর্শ</p>
 </header>
 
 <main>
   <section class="card">
-    <h2>📍 আপনার এলাকার আবহাওয়া</h2>
-    <input id="search" list="districts" placeholder="জেলা বা শহরের নাম লিখুন">
+    <h2>📍 আপনার এলাকার আবহাওয়া</h2>
+    <input id="search" list="districts" placeholder="জেলা বা শহরের নাম লিখুন (ইংরেজিতে, যেমন Dhaka)">
     <datalist id="districts">
       <option value="Dhaka"><option value="Dinajpur"><option value="Rangpur"><option value="Rajshahi">
       <option value="Chattogram"><option value="Sylhet"><option value="Khulna"><option value="Barishal">
@@ -122,25 +126,25 @@
       <button id="searchBtn">🔍 অনুসন্ধান</button>
       <button id="locationBtn" class="secondary">📍 আমার অবস্থান</button>
     </div>
-    <p id="status">আবহাওয়ার তথ্য লোড হচ্ছে...</p>
+    <p id="status">আবহাওয়ার তথ্য লোড হচ্ছে...</p>
   </section>
 
   <section class="card weather-hero">
     <h2 id="place">ঢাকা, বাংলাদেশ</h2>
     <div id="weatherIcon">🌤️</div>
     <div class="temp" id="temperature">--°C</div>
-    <p id="condition">আবহাওয়ার তথ্য অপেক্ষমাণ</p>
+    <p id="condition">আবহাওয়ার তথ্য অপেক্ষমাণ</p>
     <p id="feels">অনুভূত তাপমাত্রা: --°C</p>
   </section>
-
+  
   <section class="card">
-    <h2>🌡️ আবহাওয়ার বিস্তারিত</h2>
+    <h2>🌡️ আবহাওয়ার বিস্তারিত</h2>
     <div class="grid">
       <div class="stat"><span>💧 আর্দ্রতা</span><strong id="humidity">--%</strong></div>
       <div class="stat"><span>💨 বাতাসের গতি</span><strong id="wind">--</strong></div>
       <div class="stat"><span>🌧️ বর্তমান বৃষ্টিপাত</span><strong id="rain">--</strong></div>
       <div class="stat"><span>☀️ UV সূচক</span><strong id="uv">--</strong></div>
-      <div class="stat"><span>🌅 সূর্যোদয়</span><strong id="sunrise">--</strong></div>
+      <div class="stat"><span>🌅 সূর্যোদয়</span><strong id="sunrise">--</strong></div>
       <div class="stat"><span>🌇 সূর্যাস্ত</span><strong id="sunset">--</strong></div>
     </div>
   </section>
@@ -152,126 +156,73 @@
 
   <section class="card agri">
     <h2>🌱 স্মার্ট কৃষি পরামর্শ</h2>
-    <div class="agri-item" id="agriAdvice">আবহাওয়ার তথ্য পাওয়ার পর কৃষি পরামর্শ দেখানো হবে।</div>
+    <div class="agri-item" id="agriAdvice">আবহাওয়ার তথ্য পাওয়ার পর কৃষি পরামর্শ দেখানো হবে।</div>
     <div class="agri-item" id="agriHarvest" style="font-weight: bold;"></div>
     <div class="agri-item" id="sowMsg" style="font-weight: bold;"></div>
     <div class="agri-item" id="sprayMsg" style="font-weight: bold;"></div>
     <div class="agri-item" id="agriRain"></div>
+    <p class="disclaimer">এটি পূর্বাভাসভিত্তিক সাধারণ পরামর্শ। গুরুত্বপূর্ণ সিদ্ধান্তের আগে স্থানীয় কৃষি কর্মকর্তার পরামর্শ নিন।</p>
   </section>
 
   <section class="card notice">
-    <h2>⚠️ আবহাওয়া সতর্কবার্তা</h2>
-    <p id="alert">বর্তমান আবহাওয়ার তথ্যের ভিত্তিতে সতর্কতা দেখানো হবে。</p>
+    <h2>⚠️ আবহাওয়া সতর্কবার্তা</h2>
+    <p id="alert">বর্তমান আবহাওয়ার তথ্যের ভিত্তিতে সতর্কতা দেখানো হবে।</p>
   </section>
 
   <section class="card">
-    <h2>🔔 পুশ নোটিফিকেশন (FCM)</h2>
-    <p>সরাসরি জরুরি আবহাওয়া ও কৃষি সতর্কবার্তা পেতে পুশ নোটিফিকেশন চালু করুন。</p>
+    <h2>🔔 পুশ নোটিফিকেশন</h2>
+    <p>সরাসরি জরুরি আবহাওয়া ও কৃষি সতর্কবার্তা পেতে পুশ নোটিফিকেশন চালু করুন।</p>
     <button id="pushBtn">পুশ নোটিফিকেশন চালু করুন</button>
     <p id="notificationStatus"></p>
   </section>
 
   <section class="card" id="installCard" hidden>
     <h2>📲 অ্যাপ ইনস্টল</h2>
-    <p>অফলাইনে দ্রুত ব্যবহারের জন্য Weather BD Pro আপনার ফোনে ইনস্টল করুন。</p>
+    <p>অফলাইনে দ্রুত ব্যবহারের জন্য Weather BD Pro আপনার ফোনে ইনস্টল করুন।</p>
     <button id="installBtn">Install App</button>
   </section>
 
   <section class="card">
-    <button id="refreshBtn" class="secondary">🔄 আবহাওয়া রিফ্রেশ</button>
+    <button id="refreshBtn" class="secondary">🔄 আবহাওয়া রিফ্রেশ</button>
     <p id="updated"></p>
   </section>
 </main>
 
 <footer>
   Weather BD Pro © 2026<br>
-  বাংলাদেশের আবহাওয়া ও স্মার্ট কৃষি তথ্য
+  বাংলাদেশের আবহাওয়া ও স্মার্ট কৃষি তথ্য<br>
+  আবহাওয়ার তথ্য: Open-Meteo (মডেলভিত্তিক পূর্বাভাস, স্টেশনের সরাসরি রিডিং নয়)
 </footer>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
-
-
-  const app = initializeApp(firebaseConfig);
-  const messaging = getMessaging(app);
-  const publicVapidKey = "BEA6015vOP9V_NiSLj22w0Rwesk5ycLfw1MsmSz8Q_ZzIbNaXioZZSVKRnw4Mw6_vMDBoSzMVHax3oCb-2b62ok";
-
-  let swRegistration = null;
-  let isSubscribed = false;
-
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./sw.js")
-      .then((reg) => {
-        swRegistration = reg;
-        onMessage(messaging, (payload) => {
-          if (Notification.permission === "granted" && payload.notification) {
-            new Notification(payload.notification.title, {
-              body: payload.notification.body,
-              icon: "./icons/icon.svg"
-            });
-          }
-        });
-      })
-      .catch((err) => console.error("Service Worker registration failed:", err));
-  }
-
-  async function togglePushSubscription() {
-    const btn = document.getElementById("pushBtn");
-    const statusP = document.getElementById("notificationStatus");
-
-    if (isSubscribed) {
-      statusP.textContent = "ইতিমধ্যে সাবস্ক্রাইব করা আছে।";
-      return;
-    }
-
-    if (!("Notification" in window) || !("serviceWorker" in navigator)) {
-      statusP.style.color = "#c62828";
-      statusP.textContent = "আপনার ব্রাউজার পুশ নোটিফিকেশন সমর্থন করে না।";
-      return;
-    }
-
-    try {
-      btn.disabled = true;
-      statusP.style.color = "#5b7366";
-      statusP.textContent = "অনুমতি চাওয়া হচ্ছে...";
-
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") {
-        btn.disabled = false;
-        statusP.style.color = "#c62828";
-        statusP.textContent = "নোটিফিকেশনের অনুমতি দেওয়া হয়নি।";
-        return;
-      }
-
-      const registration = swRegistration || await navigator.serviceWorker.ready;
-      const token = await getToken(messaging, {
-        vapidKey: publicVapidKey,
-        serviceWorkerRegistration: registration
-      });
-
-      if (token) {
-        localStorage.setItem("fcmToken", token);
-        statusP.style.color = "#087e4b";
-        statusP.textContent = "✅ সফলভাবে পুশ নোটিফিকেশন চালু হয়েছে!";
-        btn.textContent = "সাবস্ক্রাইবড";
-        isSubscribed = true;
-      } else {
-        btn.disabled = false;
-        statusP.style.color = "#c62828";
-        statusP.textContent = "টোকেন পাওয়া যায়নি। আবার চেষ্টা করুন।";
-      }
-    } catch (error) {
-      btn.disabled = false;
-      statusP.style.color = "#c62828";
-      statusP.textContent = "ত্রুটি ঘটেছে: " + error.message;
-    }
-  }
-
-  document.getElementById("pushBtn").addEventListener("click", togglePushSubscription);
-
+<!-- ১) মূল অ্যাপ: আবহাওয়া, কৃষি পরামর্শ, ইনস্টল বাটন (Firebase ছাড়াই চলে) -->
+<script>
   const $ = (id) => document.getElementById(id);
   let lat = 23.8103, lon = 90.4125, city = "ঢাকা", requestNumber = 0, cache = {}, installPrompt = null;
+
+  // Service worker (ইনস্টল ও অফলাইনের জন্য জরুরি)
+  window.swReady = null;
+  if ("serviceWorker" in navigator) {
+    window.swReady = navigator.serviceWorker.register("./sw.js")
+      .catch((err) => { console.error("Service Worker registration failed:", err); return null; });
+  }
+
+  // ইনস্টল বাটন
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    installPrompt = e;
+    $("installCard").hidden = false;
+  });
+  window.addEventListener("appinstalled", () => {
+    installPrompt = null;
+    $("installCard").hidden = true;
+  });
+  $("installBtn").addEventListener("click", async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    await installPrompt.userChoice;
+    installPrompt = null;
+    $("installCard").hidden = true;
+  });
 
   const districts = {
     "Dhaka": [23.8103, 90.4125], "Dinajpur": [25.6279, 88.6332], "Rangpur": [25.7439, 89.2752],
@@ -296,40 +247,40 @@
     if (code === 0) return ["☀️", "পরিষ্কার আকাশ"];
     if (code <= 2) return ["🌤️", "আংশিক মেঘলা"];
     if (code === 3) return ["☁️", "মেঘলা আকাশ"];
-    if (code <= 48) return ["🌫️", "কুয়াশা"];
-    if (code <= 57) return ["🌦️", "গুঁড়ি গুঁড়ি বৃষ্টি"];
+    if (code <= 48) return ["🌫️", "কুয়াশা"];
+    if (code <= 57) return ["🌦️", "গুঁড়ি গুঁড়ি বৃষ্টি"];
     if (code <= 67) return ["🌧️", "বৃষ্টি"];
     if (code <= 77) return ["❄️", "তুষারপাত"];
     if (code <= 82) return ["🌧️", "বৃষ্টির ঝাপটা"];
     if (code <= 86) return ["🌨️", "তুষার ঝাপটা"];
-    return ["⛈️", "বজ্রঝড়"];
+    return ["⛈️", "বজ্রঝড়"];
   }
 
   function timeFormat(value) { return !value ? "--" : value.slice(11, 16); }
 
   async function searchCity() {
     const name = $("search").value.trim();
-    if (!name) return setStatus("একটি জেলা বা শহরের নাম লিখুন。", true);
+    if (!name) return setStatus("একটি জেলা বা শহরের নাম লিখুন।", true);
     const key = Object.keys(districts).find(k => k.toLowerCase() === name.toLowerCase());
     if (key) { lat = districts[key][0]; lon = districts[key][1]; city = key; loadWeather(); return; }
     try {
       setStatus("স্থান অনুসন্ধান হচ্ছে...");
       const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=bn&format=json`);
-      if (!res.ok) throw Error("স্থান অনুসন্ধান ব্যর্থ হয়েছে।");
+      if (!res.ok) throw Error("স্থান অনুসন্ধান ব্যর্থ হয়েছে।");
       const data = await res.json();
-      if (!data.results?.length) throw Error("স্থান পাওয়া যায়নি।");
+      if (!data.results?.length) throw Error("স্থান পাওয়া যায়নি।");
       lat = data.results[0].latitude; lon = data.results[0].longitude; city = data.results[0].name;
       loadWeather();
     } catch (err) { setStatus(err.message, true); }
   }
 
   function myLocation() {
-    if (!navigator.geolocation) return setStatus("GPS সুবিধা নেই。", true);
+    if (!navigator.geolocation) return setStatus("GPS সুবিধা নেই।", true);
     setStatus("অবস্থান খোঁজা হচ্ছে...");
     navigator.geolocation.getCurrentPosition(pos => {
       lat = pos.coords.latitude; lon = pos.coords.longitude; city = "আপনার বর্তমান অবস্থান";
       loadWeather();
-    }, () => setStatus("লোকেশন অনুমতি পাওয়া যায়নি。", true), { enableHighAccuracy: true, timeout: 12000 });
+    }, () => setStatus("লোকেশন অনুমতি পাওয়া যায়নি।", true), { enableHighAccuracy: true, timeout: 12000 });
   }
 
   async function loadWeather(force = false) {
@@ -337,19 +288,19 @@
     if (!force && cache[key] && Date.now() - cache[key].time < 300000) {
       renderWeather(cache[key].data); setStatus("সংরক্ষিত তথ্য দেখানো হচ্ছে।"); return;
     }
-    setStatus("লাইভ আবহাওয়া সংগ্রহ হচ্ছে...");
+    setStatus("লাইভ আবহাওয়া সংগ্রহ হচ্ছে...");
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
     try {
-      const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max,sunrise,sunset&timezone=auto&forecast_days=5`, { signal: controller.signal });
+      const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max,sunrise,sunset&timezone=auto&forecast_days=5&temperature_unit=celsius&wind_speed_unit=kmh`, { signal: controller.signal });
       if (!res.ok) throw Error("সারভার সংযোগ ব্যর্থ।");
       const data = await res.json();
       if (!data.current || !data.daily || reqId !== requestNumber) return;
       cache[key] = { data, time: Date.now() }; renderWeather(data);
-      try { localStorage.setItem("weatherBDLast", JSON.stringify({ data, city, lat, lon, time: Date.now() })); } catch(e){}
-      setStatus("সফলভাবে আপডেট হয়েছে।"); $("updated").textContent = "সর্বশেষ আপডেট: " + new Date().toLocaleString("bn-BD");
-    } catch(err) {
-      if (reqId === requestNumber) setStatus(err.name === "AbortError" ? "সময় শেষ হয়েছে।" : err.message, true);
+      try { localStorage.setItem("weatherBDLast", JSON.stringify({ data, city, lat, lon, time: Date.now() })); } catch (e) {}
+      setStatus("সফলভাবে আপডেট হয়েছে।"); $("updated").textContent = "সর্বশেষ আপডেট: " + new Date().toLocaleString("bn-BD");
+    } catch (err) {
+      if (reqId === requestNumber) setStatus(err.name === "AbortError" ? "সময় শেষ হয়েছে।" : (err.message || "তথ্য আনা যায়নি।"), true);
     } finally { clearTimeout(timeout); }
   }
 
@@ -381,29 +332,30 @@
   }
 
   function agricultureAdvice(c, d) {
-    const advice = [], rainProb = d.precipitation_probability_max[0];
+    const advice = [], rainProb = d.precipitation_probability_max[0] ?? 0;
     if (c.temperature_2m >= 35) advice.push("তাপমাত্রা বেশি। সেচ দিন।");
-    else if (c.temperature_2m <= 12) advice.push("ঠান্ডা বেশি। চারা রক্ষায় ছাউনি ব্যবহার করুন।");
+    else if (c.temperature_2m <= 12) advice.push("ঠান্ডা বেশি। চারা রক্ষায় ছাউনি ব্যবহার করুন।");
     if (c.relative_humidity_2m >= 80) advice.push("আর্দ্রতা বেশি। ছত্রাক রোগ পর্যবেক্ষণ করুন।");
     if (c.precipitation > 0) advice.push("বৃষ্টি হচ্ছে। পানি নিষ্কাশনের ব্যবস্থা রাখুন।");
-    if (rainProb >= 60) advice.push("বৃষ্টির সম্ভাবনা বেশি। সার প্রয়োগ স্থগিত রাখুন।");
-    if (c.wind_speed_10m >= 25) advice.push("বাতাস বেশি। খুঁটি দিয়ে সুরক্ষা দিন।");
-    if (!advice.length) advice.push("আবহাওয়া স্বাভাবিক। নিয়মিত জমি পর্যবেক্ষণ করুন।");
+    if (rainProb >= 60) advice.push("বৃষ্টির সম্ভাবনা বেশি। সার প্রয়োগ স্থগিত রাখুন।");
+    if (c.wind_speed_10m >= 25) advice.push("বাতাস বেশি। খুঁটি দিয়ে সুরক্ষা দিন।");
+    if (!advice.length) advice.push("আবহাওয়া স্বাভাবিক। নিয়মিত জমি পর্যবেক্ষণ করুন।");
 
-    let harvestMsg = "✅ ফসল কাটার জন্য আবহাওয়া অনুকূল।", harvestColor = "#087e4b";
+    let harvestMsg = "✅ ফসল কাটার জন্য আবহাওয়া অনুকূল।", harvestColor = "#087e4b";
     if (c.precipitation > 0 || c.weather_code >= 51) {
-      harvestMsg = " আবহাওয়া। ফসল কাটা থেকে বিরত থাকুন।"; harvestColor = "#c62828";
+      harvestMsg = "⛔ প্রতিকূল আবহাওয়া। ফসল কাটা থেকে বিরত থাকুন।"; harvestColor = "#c62828";
     } else if (rainProb >= 50) {
       harvestMsg = `⚠️ বৃষ্টির সম্ভাবনা (${rainProb}%)। ফসল দ্রুত নিরাপদ স্থানে রাখুন।`; harvestColor = "#d97706";
     } else if (c.wind_speed_10m >= 25) {
-      harvestMsg = "⚠️ বাতাসের গতি বেশি। ফসল কাটায় সতর্কতা অবলম্বন করুন।"; harvestColor = "#d97706";
+      harvestMsg = "⚠️ বাতাসের গতি বেশি। ফসল কাটায় সতর্কতা অবলম্বন করুন।"; harvestColor = "#d97706";
     }
 
     const canSow = c.wind_speed_10m < 20 && c.precipitation === 0 && rainProb < 60;
-    const sowMsg = canSow ? "✅ বীজ বপন ও চারা রোপণ উপযোগী。" : "⚠️ ঝোড়ো বাতাস বা বৃষ্টির আশঙ্কায় বীজ বপন স্থগিত রাখুন।";
+    const sowMsg = canSow ? "✅ বীজ বপন ও চারা রোপণ উপযোগী।" : "⚠️ ঝোড়ো বাতাস বা বৃষ্টির আশঙ্কায় বীজ বপন স্থগিত রাখুন।";
     const canSpray = c.wind_speed_10m < 18 && c.precipitation === 0 && rainProb < 40;
-    const sprayMsg = canSpray ? "✅ বালাইনাশক স্প্রে করার জন্য আবহাওয়া উপযুক্ত。" : "⚠️ বাতাস বা বৃষ্টির কারণে বালাইনাশক ছিটাবেন না।";
-$("agriAdvice").textContent = advice.join(" ");
+    const sprayMsg = canSpray ? "✅ বালাইনাশক স্প্রে করার জন্য আবহাওয়া উপযুক্ত।" : "⚠️ বাতাস বা বৃষ্টির কারণে বালাইনাশক ছিটাবেন না।";
+
+    $("agriAdvice").textContent = advice.join(" ");
     $("agriHarvest").textContent = harvestMsg; $("agriHarvest").style.color = harvestColor;
     $("sowMsg").textContent = sowMsg; $("sowMsg").style.color = canSow ? "#087e4b" : "#d97706";
     $("sprayMsg").textContent = sprayMsg; $("sprayMsg").style.color = canSpray ? "#087e4b" : "#d97706";
@@ -413,28 +365,118 @@ $("agriAdvice").textContent = advice.join(" ");
   function weatherAlert(c, d) {
     const alerts = [];
     if (c.temperature_2m >= 38) alerts.push("🔥 তীব্র তাপপ্রবাহ। রোদে সতর্ক থাকুন।");
-    if (c.wind_speed_10m >= 35) alerts.push("💨 দমকা হাওয়া বইছে। সতর্ক থাকুন।");
-    if (d.precipitation_probability_max[0] >= 80) alerts.push("🌧️ ভারী বর্ষণের সম্ভাবনা।");
-    if (c.weather_code >= 95) alerts.push("⛈️ বজ্রঝড়ের আশঙ্কা। নিরাপদ স্থানে থাকুন।");
-    $("alert").textContent = alerts.length ? alerts.join(" ") : "✅ কোনো বড় দুর্যোগ সতর্কতা নেই।";
+    if (c.wind_speed_10m >= 35) alerts.push("💨 দমকা হাওয়া বইছে। সতর্ক থাকুন।");
+    if ((d.precipitation_probability_max[0] ?? 0) >= 80) alerts.push("🌧️ ভারী বর্ষণের সম্ভাবনা।");
+    if (c.weather_code >= 95) alerts.push("⛈️ বজ্রঝড়ের আশঙ্কা। নিরাপদ স্থানে থাকুন।");
+    $("alert").textContent = alerts.length ? alerts.join(" ") : "✅ কোনো বড় দুর্যোগ সতর্কতা নেই।";
   }
-
-  window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); installPrompt = e; $("installCard").hidden = false; });
-  $("installBtn").addEventListener("click", async () => {
-    if (!installPrompt) return; installPrompt.prompt(); await installPrompt.userChoice; installPrompt = null; $("installCard").hidden = true;
-  });
 
   $("searchBtn").addEventListener("click", searchCity);
   $("locationBtn").addEventListener("click", myLocation);
   $("refreshBtn").addEventListener("click", () => loadWeather(true));
-  $("search").addEventListener("keypress", (e) => { if (e.key === "Enter") searchCity(); });
+  $("search").addEventListener("keydown", (e) => { if (e.key === "Enter") searchCity(); });
 
   try {
     const saved = JSON.parse(localStorage.getItem("weatherBDLast"));
     if (saved?.data) { city = saved.city; lat = saved.lat; lon = saved.lon; renderWeather(saved.data); }
-  } catch(e){}
+  } catch (e) {}
 
   loadWeather();
 </script>
+
+<!-- ২) পুশ নোটিফিকেশন (Firebase) — এটা আলাদা, তাই ব্যর্থ হলেও আবহাওয়া চলবে -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getMessaging, getToken, onMessage, isSupported } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCxINWdKD9oKycRP4nBuhe82fXspjYTz4M",
+    authDomain: "weather-bd-pro.firebaseapp.com",
+    projectId: "weather-bd-pro",
+    storageBucket: "weather-bd-pro.firebasestorage.app",
+    messagingSenderId: "958275433699",
+    appId: "1:958275433699:web:e08edaccb32a6158b881d6",
+    measurementId: "G-YL2BNLF6Z9"
+  };
+  const publicVapidKey = "BEA6015vOP9V_NiSLj22w0Rwesk5ycLfw1MsmSz8Q_ZzIbNaXioZZSVKRnw4Mw6_vMDBoSzMVHax3oCb-2b62ok";
+
+  const btn = document.getElementById("pushBtn");
+  const statusP = document.getElementById("notificationStatus");
+  let messaging = null;
+  let isSubscribed = false;
+
+  function showStatus(text, color) {
+    statusP.style.color = color || "#5b7366";
+    statusP.textContent = text;
+  }
+
+  function markSubscribed() {
+    isSubscribed = true;
+    btn.textContent = "✅ নোটিফিকেশন চালু আছে";
+    btn.disabled = true;
+  }
+
+  async function init() {
+    try {
+      if (!("Notification" in window) || !("serviceWorker" in navigator) || !(await isSupported())) {
+        btn.disabled = true;
+        showStatus("আপনার ব্রাউজার পুশ নোটিফিকেশন সমর্থন করে না। (iPhone-এ আগে অ্যাপটি Home Screen-এ যোগ করুন।)", "#c62828");
+        return;
+      }
+      messaging = getMessaging(initializeApp(firebaseConfig));
+
+      // অ্যাপ খোলা থাকা অবস্থায় আসা মেসেজ দেখানো
+      onMessage(messaging, async (payload) => {
+        const n = payload.notification || {};
+        const reg = await navigator.serviceWorker.ready;
+        reg.showNotification(n.title || "Weather BD Pro সতর্কবার্তা", {
+          body: n.body || "",
+          icon: "./icons/icon-192.png",
+          badge: "./icons/icon-192.png"
+        });
+      });
+
+      if (Notification.permission === "granted" && localStorage.getItem("fcmToken")) markSubscribed();
+    } catch (err) {
+      console.error("Firebase init failed:", err);
+      showStatus("নোটিফিকেশন সেটআপে সমস্যা: " + err.message, "#c62828");
+    }
+  }
+
+  async function togglePushSubscription() {
+    if (isSubscribed) return;
+    if (!messaging) { showStatus("নোটিফিকেশন প্রস্তুত নয়। পেজ রিফ্রেশ করে আবার চেষ্টা করুন।", "#c62828"); return; }
+
+    try {
+      btn.disabled = true;
+      showStatus("অনুমতি চাওয়া হচ্ছে...");
+
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        btn.disabled = false;
+        showStatus("নোটিফিকেশনের অনুমতি দেওয়া হয়নি। ব্রাউজারের সেটিংস থেকে অনুমতি দিন।", "#c62828");
+        return;
+      }
+
+      const registration = (window.swReady && await window.swReady) || await navigator.serviceWorker.ready;
+      const token = await getToken(messaging, { vapidKey: publicVapidKey, serviceWorkerRegistration: registration });
+
+      if (token) {
+        localStorage.setItem("fcmToken", token);
+        showStatus("✅ সফলভাবে পুশ নোটিফিকেশন চালু হয়েছে!", "#087e4b");
+        markSubscribed();
+      } else {
+        btn.disabled = false;
+        showStatus("টোকেন পাওয়া যায়নি। আবার চেষ্টা করুন।", "#c62828");
+      }
+    } catch (error) {
+      btn.disabled = false;
+      showStatus("ত্রুটি ঘটেছে: " + error.message, "#c62828");
+    }
+  }
+
+  btn.addEventListener("click", togglePushSubscription);
+  init();
+</script>
 </body>
-  </html>
+</html>
