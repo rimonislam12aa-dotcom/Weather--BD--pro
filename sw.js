@@ -13,38 +13,52 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
+// নোটিফিকেশন পেলোডে "notification" ফিল্ড থাকলে Firebase নিজেই ব্যাকগ্রাউন্ডে দেখায়।
+// তাই এখানে শুধু তখনই দেখাই যখন মেসেজে শুধু "data" ফিল্ড থাকে (ডুপ্লিকেট এড়াতে)।
 messaging.onBackgroundMessage((payload) => {
-  const title = payload.notification?.title || "Weather BD Pro সতর্কবার্তা";
-  const options = {
-    body: payload.notification?.body || "নতুন আবহাওয়া ও কৃষি তথ্য পাওয়া গেছে।",
-    icon: "./icons/icon.svg",
-    badge: "./icons/icon.svg",
+  if (payload.notification) return;
+  const data = payload.data || {};
+  self.registration.showNotification(data.title || "Weather BD Pro সতর্কবার্তা", {
+    body: data.body || "নতুন আবহাওয়া ও কৃষি তথ্য পাওয়া গেছে।",
+    icon: "./icons/icon-192.png",
+    badge: "./icons/icon-192.png",
     data: { url: "./" }
-  };
-  self.registration.showNotification(title, options);
+  });
 });
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
+  const target = new URL("./", self.registration.scope).href;
   event.waitUntil(
     clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
-        if (client.url.includes("Weather--BD--pro") && "focus" in client) {
+        if (client.url.startsWith(self.registration.scope) && "focus" in client) {
           return client.focus();
         }
       }
-      if (clients.openWindow) {
-        return clients.openWindow("./");
-      }
+      if (clients.openWindow) return clients.openWindow(target);
     })
   );
 });
 
-const CACHE_NAME = "weather-bd-v5";
-const FILES = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon.svg"];
+const CACHE_NAME = "weather-bd-v6";
+const FILES = [
+  "./",
+  "./index.html",
+  "./manifest.webmanifest",
+  "./icons/icon.svg",
+  "./icons/icon-192.png",
+  "./icons/icon-512.png",
+  "./icons/icon-maskable-512.png"
+];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES)));
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) =>
+      // কোনো একটি ফাইল না পেলেও ইনস্টল যেন ব্যর্থ না হয়
+      Promise.all(FILES.map((file) => cache.add(file).catch(() => null)))
+    )
+  );
   self.skipWaiting();
 });
 
