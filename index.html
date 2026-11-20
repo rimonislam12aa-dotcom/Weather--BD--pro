@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#087e4b">
   <meta name="description" content="Weather BD Pro - বাংলাদেশের লাইভ আবহাওয়া ও স্মার্ট কৃষি পরামর্শ">
-  <!-- Google Search Console যাচাইয়ের ট্যাগ এখানে বসান, যেমন:
-  <meta name="google-site-verification" content="আপনার-কোড"> -->
   <title>Weather BD Pro | লাইভ আবহাওয়া ও স্মার্ট কৃষি</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
@@ -25,6 +23,7 @@
     * { box-sizing: border-box; }
     body {
       margin: 0;
+      padding-bottom: 78px; /* নিচের নেভিগেশন বারের জন্য জায়গা */
       font-family: "Noto Sans Bengali", Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
@@ -33,13 +32,19 @@
     header {
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: #ffffff;
-      padding: 28px 16px;
+      padding: 22px 16px;
       text-align: center;
       box-shadow: 0 4px 12px rgba(6, 77, 53, 0.18);
     }
-    header h1 { margin: 0; font-size: 28px; letter-spacing: 0.3px; }
-    header p { margin: 8px 0 0; color: #d9f5e7; font-size: 15px; }
+    header h1 { margin: 0; font-size: 24px; letter-spacing: 0.3px; }
+    header p { margin: 6px 0 0; color: #d9f5e7; font-size: 14px; }
     main { max-width: 920px; margin: 0 auto; padding: 14px; }
+
+    /* পেজ সিস্টেম */
+    .app-page { display: none; animation: fadeIn 0.2s ease-in-out; }
+    .app-page.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0.5; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
     .card {
       background: var(--card-bg);
       border-radius: 16px;
@@ -50,16 +55,39 @@
     }
     .card[hidden] { display: none; }
     h2 { font-size: 18px; margin: 0 0 14px; display: flex; align-items: center; gap: 6px; }
-    input, button {
+
+    .part-fieldset {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 18px 18px;
+      margin: 0 0 16px;
+      box-shadow: 0 4px 14px rgba(23, 53, 42, 0.05);
+    }
+    .part-fieldset legend {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 5px 14px;
+      border-radius: 999px;
+    }
+    .field-group { margin-bottom: 12px; }
+    .field-group:last-child { margin-bottom: 0; }
+    label { display: block; font-weight: 600; font-size: 14px; color: var(--text); margin-bottom: 5px; }
+
+    input, select, button {
       width: 100%;
       padding: 12px 14px;
       border-radius: 10px;
       border: 1px solid var(--border);
       font-size: 15px;
-      margin: 5px 0;
+      margin: 4px 0;
       font-family: inherit;
+      background: #ffffff;
+      color: var(--text);
     }
-    input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(8, 126, 75, 0.15); }
+    input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(8, 126, 75, 0.15); }
     button {
       background: var(--primary); color: #ffffff; border: 0; font-weight: bold; cursor: pointer;
       transition: background 0.2s, transform 0.1s;
@@ -68,37 +96,88 @@
     button:active:not(:disabled) { transform: scale(0.99); }
     button.secondary { background: var(--secondary); }
     button:disabled { opacity: 0.65; cursor: not-allowed; }
-    .search-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+
+    .search-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
     .weather-hero { text-align: center; background: linear-gradient(135deg, #dff5e8, #f7fff9); border: 1px solid #bfe6cf; }
     .weather-hero h2 { justify-content: center; font-size: 21px; color: var(--primary-dark); }
-    .temp { font-size: 56px; font-weight: bold; color: var(--primary); line-height: 1.1; margin: 6px 0; }
-    #weatherIcon { font-size: 58px; line-height: 1.1; }
+    .temp { font-size: 54px; font-weight: bold; color: var(--primary); line-height: 1.1; margin: 6px 0; }
+    #weatherIcon { font-size: 56px; line-height: 1.1; }
     #condition { font-size: 18px; font-weight: bold; margin: 4px 0; }
     #feels { color: var(--muted); margin: 4px 0 0; font-size: 14px; }
+
     .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
     @media (min-width: 600px) { .grid { grid-template-columns: repeat(3, 1fr); } }
     .stat { background: #f2f8f4; padding: 14px; border-radius: 12px; border: 1px solid #e2efe7; }
     .stat span { display: block; color: var(--muted); font-size: 13px; margin-bottom: 4px; }
     .stat strong { font-size: 18px; color: var(--text); }
+
     .forecast { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
     .day { background: #f2f8f4; text-align: center; padding: 12px 4px; border-radius: 12px; font-size: 13px; border: 1px solid #e2efe7; }
     .day b { display: block; font-size: 24px; margin: 6px 0; }
+
     .agri { background: #e6f7eb; border-left: 5px solid #159447; }
     .agri h2 { color: var(--primary); }
-    .agri-item { background: rgba(255, 255, 255, 0.75); padding: 10px 12px; border-radius: 8px; margin: 8px 0; font-size: 14.5px; }
+    .crop-pill {
+      display: inline-block; background: #ffffff; color: var(--primary-dark);
+      border: 1px solid #b8dfc6; padding: 5px 12px; border-radius: 999px;
+      font-size: 13.5px; font-weight: 700; margin-bottom: 10px;
+    }
+    .agri-item { background: rgba(255, 255, 255, 0.85); padding: 10px 12px; border-radius: 8px; margin: 8px 0; font-size: 14.5px; }
     .agri-item:empty { display: none; }
+    .crop-box { background: #ffffff; border: 1px solid #c6e5d1; border-radius: 10px; padding: 12px 14px; margin: 10px 0; }
+    .crop-box h3 { margin: 0 0 6px; font-size: 15.5px; color: var(--primary-dark); }
+    .crop-box p { margin: 5px 0; font-size: 14px; }
+
     .notice { background: #fff6df; border-left: 5px solid #e3a325; }
+    .placeholder-page { text-align: center; padding: 36px 18px; border: 2px dashed #bfe0ce; background: #f8fcfa; }
     .disclaimer { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
-    #status { font-size: 13.5px; color: var(--muted); margin: 8px 0 0; }
-    #notificationStatus, #updated { font-size: 13.5px; margin: 8px 0 0; color: var(--muted); }
-    footer { text-align: center; padding: 24px 16px; color: var(--muted); font-size: 13px; }
+    #status, #notificationStatus, #updated { font-size: 13.5px; color: var(--muted); margin: 8px 0 0; }
+    footer { text-align: center; padding: 20px 16px; color: var(--muted); font-size: 13px; }
+
+    /* নিচের ৩-ট্যাব নেভিগেশন বার (FarmRise স্টাইল) */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 6px 8px;
+      box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.06);
+      z-index: 1000;
+    }
+    .nav-tab {
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      margin: 0;
+      padding: 6px 4px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+    .nav-tab:hover:not(:disabled) { background: #f2f8f4; }
+    .nav-tab .nav-icon {
+      font-size: 20px;
+      padding: 4px 16px;
+      border-radius: 999px;
+      line-height: 1.1;
+    }
+    .nav-tab.active { color: var(--primary-dark); font-weight: 700; }
+    .nav-tab.active .nav-icon { background: #dff5e8; }
+
     @media (max-width: 450px) {
       .forecast { gap: 4px; }
       .day { font-size: 11px; padding: 8px 2px; }
       .day b { font-size: 20px; }
       .temp { font-size: 46px; }
     }
-    form { background: #eef5f1; padding: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
   </style>
 </head>
 <body>
@@ -108,130 +187,180 @@
   <p>বাংলাদেশের লাইভ আবহাওয়া ও স্মার্ট কৃষি পরামর্শ</p>
 </header>
 
-  <form>
-  <label>অঞ্চল নির্বাচন করুন:</label>
-  <select>
-    <option value="ঢাকা">ঢাকা</option>
-    <option value="দিনাজপুর">দিনাজপুর</option>
-    <option value="রংপুর">রংপুর</option>
-    <option value="রাজশাহী">রাজশাহী</option>
-    <option value="চট্টগ্রাম">চট্টগ্রাম</option>
-    <option value="সিলেট">সিলেট</option>
-    <option value="খুলনা">খুলনা</option>
-    <option value="বরিশাল">বরিশাল</option>
-    <option value="ময়মনসিংহ">ময়মনসিংহ</option>
-    <option value="কুমিল্লা">কুমিল্লা</option>
-    <option value="বগুড়া">বগুড়া</option>
-    <option value="যশোর">যশোর</option>
-    <option value="পাবনা">পাবনা</option>
-    <option value="কুষ্টিয়া">কুষ্টিয়া</option>
-    <option value="ফেনী">ফেনী</option>
-    <option value="কক্সবাজার">কক্সবাজার</option>
-    <option value="ঠাকুরগাঁও">ঠাকুরগাঁও</option>
-    <option value="পঞ্চগড়">পঞ্চগড়</option>
-    <option value="নীলফামারী">নীলফামারী</option>
-    <option value="লালমনিরহাট">লালমনিরহাট</option>
-    <option value="কুড়িগ্রাম">কুড়িগ্রাম</option>
-    <option value="গাইবান্ধা">গাইবান্ধা</option>
-    <option value="নোয়াখালী">নোয়াখালী</option>
-    <option value="গাজীপুর">গাজীপুর</option>
-    <option value="নারায়ণগঞ্জ">নারায়ণগঞ্জ</option>
-    <option value="টাঙ্গাইল">টাঙ্গাইল</option>
-    <option value="ফরিদপুর">ফরিদপুর</option>
-    <option value="সাতক্ষীরা">সাতক্ষীরা</option>
-    <option value="ভোলা">ভোলা</option>
-    <option value="পটুয়াখালী">পটুয়াখালী</option>
-    <option value="মৌলভীবাজার">মৌলভীবাজার</option>
-    <option value="হবিগঞ্জ">হবিগঞ্জ</option>
-    <option value="সুনামগঞ্জ">সুনামগঞ্জ</option>
-  </select>
-  <br>
-  <label>মাটির ধরন:</label>
-  <select>
-    <option value="দোআঁশ">দোআঁশ</option>
-    <option value="এঁটেল">এঁটেল</option>
-    <option value="বেলে">বেলে</option>
-  </select>
-  </form>
 <main>
-  <section class="card">
-    <h2>📍 আপনার এলাকার আবহাওয়া</h2>
-    <input id="search" list="districts" placeholder="জেলা বা শহরের নাম লিখুন (ইংরেজিতে, যেমন Dhaka)">
-    <datalist id="districts">
-      <option value="ঢাকা"><option value="দিনাজপুর"><option value="রংপুর"><option value="রাজশাহী">
-      <option value="চট্টগ্রাম"><option value="সিলেট"><option value="খুলনা"><option value="বরিশাল">
-      <option value="ময়মনসিং"><option value="কুমিল্লা"><option value="বগুড়া"><option value="যশোর">
-      <option value="পাবনা"><option value="কুষ্টিয়া"><option value="ফেনী "><option value="কক্সবাজার">
-      <option value="ঠাকুরগাঁ"><option value="পঞ্চগড়"><option value="নীলফামারী"><option value="লালমনির হাট ">
-      <option value="কুড়িগ্রাম"><option value="গাইবান্ধা"><option value="নোয়াখালী"><option value="গাজীপুর">
-      <option value="নারায়ণগঞ্জ"><option value="টাঙ্গাইল"><option value="ফরিদপুর"><option value="সাতক্ষীরা">
-      <option value="ভোলা"><option value="পটুয়াখালী"><option value="মৌলভীবাজার"><option value="হবিগঞ্জ">
-      <option value="সুনামগঞ্জ">
-    </datalist>
-    <div class="search-actions">
-      <button id="searchBtn">🔍 অনুসন্ধান</button>
-      <button id="locationBtn" class="secondary">📍 আমার অবস্থান</button>
-    </div>
-    <p id="status">আবহাওয়ার তথ্য লোড হচ্ছে...</p>
-  </section>
+  <!-- ==================== পেজ ১: হোম (লাইভ আবহাওয়া ও অনুসন্ধান) ==================== -->
+  <div id="page1" class="app-page active">
+    <fieldset class="part-fieldset">
+      <legend>📍 অঞ্চল ও অবস্থান অনুসন্ধান</legend>
+      <div class="field-group">
+        <label for="regionSelect">জেলা নির্বাচন করুন:</label>
+        <select id="regionSelect">
+          <option value="ঢাকা">ঢাকা</option>
+          <option value="দিনাজপুর">দিনাজপুর</option>
+          <option value="রংপুর">রংপুর</option>
+          <option value="রাজশাহী">রাজশাহী</option>
+          <option value="চট্টগ্রাম">চট্টগ্রাম</option>
+          <option value="সিলেট">সিলেট</option>
+          <option value="খুলনা">খুলনা</option>
+          <option value="বরিশাল">বরিশাল</option>
+          <option value="ময়মনসিংহ">ময়মনসিংহ</option>
+          <option value="কুমিল্লা">কুমিল্লা</option>
+          <option value="বগুড়া">বগুড়া</option>
+          <option value="যশোর">যশোর</option>
+          <option value="পাবনা">পাবনা</option>
+          <option value="কুষ্টিয়া">কুষ্টিয়া</option>
+          <option value="ফেনী">ফেনী</option>
+          <option value="কক্সবাজার">কক্সবাজার</option>
+          <option value="ঠাকুরগাঁও">ঠাকুরগাঁও</option>
+          <option value="পঞ্চগড়">পঞ্চগড়</option>
+          <option value="নীলফামারী">নীলফামারী</option>
+          <option value="লালমনিরহাট">লালমনিরহাট</option>
+          <option value="কুড়িগ্রাম">কুড়িগ্রাম</option>
+          <option value="গাইবান্ধা">গাইবান্ধা</option>
+          <option value="নোয়াখালী">নোয়াখালী</option>
+          <option value="গাজীপুর">গাজীপুর</option>
+          <option value="নারায়ণগঞ্জ">নারায়ণগঞ্জ</option>
+          <option value="টাঙ্গাইল">টাঙ্গাইল</option>
+          <option value="ফরিদপুর">ফরিদপুর</option>
+          <option value="সাতক্ষীরা">সাতক্ষীরা</option>
+          <option value="ভোলা">ভোলা</option>
+          <option value="পটুয়াখালী">পটুয়াখালী</option>
+          <option value="মৌলভীবাজার">মৌলভীবাজার</option>
+          <option value="হবিগঞ্জ">হবিগঞ্জ</option>
+          <option value="সুনামগঞ্জ">সুনামগঞ্জ</option>
+        </select>
+      </div>
 
-  <section class="card weather-hero">
-    <h2 id="place">ঢাকা, বাংলাদেশ</h2>
-    <div id="weatherIcon">🌤️</div>
-    <div class="temp" id="temperature">--°C</div>
-    <p id="condition">আবহাওয়ার তথ্য অপেক্ষমাণ</p>
-    <p id="feels">অনুভূত তাপমাত্রা: --°C</p>
-  </section>
-  
-  <section class="card">
-    <h2>🌡️ আবহাওয়ার বিস্তারিত</h2>
-    <div class="grid">
-      <div class="stat"><span>💧 আর্দ্রতা</span><strong id="humidity">--%</strong></div>
-      <div class="stat"><span>💨 বাতাসের গতি</span><strong id="wind">--</strong></div>
-      <div class="stat"><span>🌧️ বর্তমান বৃষ্টিপাত</span><strong id="rain">--</strong></div>
-      <div class="stat"><span>☀️ UV সূচক</span><strong id="uv">--</strong></div>
-      <div class="stat"><span>🌅 সূর্যোদয়</span><strong id="sunrise">--</strong></div>
-      <div class="stat"><span>🌇 সূর্যাস্ত</span><strong id="sunset">--</strong></div>
-    </div>
-  </section>
+      <div class="field-group">
+        <input id="search" list="districts" placeholder="অথবা শহর/উপজেলার নাম লিখুন (যেমন: Birganj, Dhaka)">
+        <datalist id="districts">
+          <option value="Dhaka"><option value="Dinajpur"><option value="Rangpur"><option value="Rajshahi">
+          <option value="Chattogram"><option value="Sylhet"><option value="Khulna"><option value="Barishal">
+          <option value="Mymensingh"><option value="Cumilla"><option value="Bogura"><option value="Jessore">
+          <option value="Pabna"><option value="Kushtia"><option value="Feni"><option value="Cox's Bazar">
+          <option value="Thakurgaon"><option value="Panchagarh"><option value="Nilphamari"><option value="Lalmonirhat">
+          <option value="Kurigram"><option value="Gaibandha"><option value="Noakhali"><option value="Gazipur">
+          <option value="Narayanganj"><option value="Tangail"><option value="Faridpur"><option value="Satkhira">
+          <option value="Bhola"><option value="Patuakhali"><option value="Moulvibazar"><option value="Habiganj">
+          <option value="Sunamganj">
+        </datalist>
+      </div>
 
-  <section class="card">
-    <h2>📅 আগামী ৫ দিনের পূর্বাভাস</h2>
-    <div class="forecast" id="forecast"><div class="day">লোড হচ্ছে...</div></div>
-  </section>
+      <div class="search-actions">
+        <button type="button" id="searchBtn">🔍 অনুসন্ধান</button>
+        <button type="button" id="locationBtn" class="secondary">📍 আমার অবস্থান</button>
+      </div>
+      <p id="status">আবহাওয়ার তথ্য লোড হচ্ছে...</p>
+    </fieldset>
 
-  <section class="card agri">
-    <h2>🌱 স্মার্ট কৃষি পরামর্শ</h2>
-    <div class="agri-item" id="agriAdvice">আবহাওয়ার তথ্য পাওয়ার পর কৃষি পরামর্শ দেখানো হবে।</div>
-    <div class="agri-item" id="agriHarvest" style="font-weight: bold;"></div>
-    <div class="agri-item" id="sowMsg" style="font-weight: bold;"></div>
-    <div class="agri-item" id="sprayMsg" style="font-weight: bold;"></div>
-    <div class="agri-item" id="agriRain"></div>
-    <p class="disclaimer">এটি পূর্বাভাসভিত্তিক সাধারণ পরামর্শ। গুরুত্বপূর্ণ সিদ্ধান্তের আগে স্থানীয় কৃষি কর্মকর্তার পরামর্শ নিন।</p>
-  </section>
+    <section class="card weather-hero">
+      <h2 id="place">ঢাকা, বাংলাদেশ</h2>
+      <div id="weatherIcon">🌤️</div>
+      <div class="temp" id="temperature">--°C</div>
+      <p id="condition">আবহাওয়ার তথ্য অপেক্ষমাণ</p>
+      <p id="feels">অনুভূত তাপমাত্রা: --°C</p>
+    </section>
 
-  <section class="card notice">
-    <h2>⚠️ আবহাওয়া সতর্কবার্তা</h2>
-    <p id="alert">বর্তমান আবহাওয়ার তথ্যের ভিত্তিতে সতর্কতা দেখানো হবে।</p>
-  </section>
+    <section class="card">
+      <h2>🌡️ আবহাওয়ার বিস্তারিত</h2>
+      <div class="grid">
+        <div class="stat"><span>💧 আর্দ্রতা</span><strong id="humidity">--%</strong></div>
+        <div class="stat"><span>💨 বাতাসের গতি</span><strong id="wind">--</strong></div>
+        <div class="stat"><span>🌧️ বর্তমান বৃষ্টিপাত</span><strong id="rain">--</strong></div>
+        <div class="stat"><span>☀️ UV সূচক</span><strong id="uv">--</strong></div>
+        <div class="stat"><span>🌅 সূর্যোদয়</span><strong id="sunrise">--</strong></div>
+        <div class="stat"><span>🌇 সূর্যাস্ত</span><strong id="sunset">--</strong></div>
+      </div>
+    </section>
 
-  <section class="card">
-    <h2>🔔 পুশ নোটিফিকেশন</h2>
-    <p>সরাসরি জরুরি আবহাওয়া ও কৃষি সতর্কবার্তা পেতে পুশ নোটিফিকেশন চালু করুন।</p>
-    <button id="pushBtn">পুশ নোটিফিকেশন চালু করুন</button>
-    <p id="notificationStatus"></p>
-  </section>
+    <section class="card">
+      <h2>📅 আগামী ৫ দিনের পূর্বাভাস</h2>
+      <div class="forecast" id="forecast"><div class="day">লোড হচ্ছে...</div></div>
+    </section>
 
-  <section class="card" id="installCard" hidden>
-    <h2>📲 অ্যাপ ইনস্টল</h2>
-    <p>অফলাইনে দ্রুত ব্যবহারের জন্য Weather BD Pro আপনার ফোনে ইনস্টল করুন।</p>
-    <button id="installBtn">Install App</button>
-  </section>
+    <section class="card notice">
+      <h2>⚠️ আবহাওয়া সতর্কবার্তা</h2>
+      <p id="alert">বর্তমান আবহাওয়ার তথ্যের ভিত্তিতে সতর্কতা দেখানো হবে।</p>
+    </section>
+  </div>
+ <!-- ==================== পেজ ২: ফসলভিত্তিক কৃষি পরামর্শ ==================== -->
+  <div id="page2" class="app-page">
+    <fieldset class="part-fieldset">
+      <legend>🌾 মাটি ও ফসল নির্বাচন</legend>
+      <div class="field-group">
+        <label for="soilSelect">মাটির ধরন:</label>
+        <select id="soilSelect">
+          <option value="দোআঁশ">দোআঁশ</option>
+          <option value="এঁটেল">এঁটেল</option>
+          <option value="বেলে">বেলে</option>
+        </select>
+      </div>
 
-  <section class="card">
-    <button id="refreshBtn" class="secondary">🔄 আবহাওয়া রিফ্রেশ</button>
-    <p id="updated"></p>
-  </section>
+      <div class="field-group">
+        <label for="cropSelect">ফসল নির্বাচন করুন:</label>
+        <select id="cropSelect">
+          <option value="ধান">ধান (বোরো / আমন)</option>
+          <option value="গম">গম</option>
+          <option value="ভুট্টা">ভুট্টা</option>
+          <option value="সরিষা">সরিষা</option>
+          <option value="শাকসবজি">শাকসবজি (আলু / টমেটো / লাউ)</option>
+        </select>
+      </div>
+    </fieldset>
+
+    <section class="card agri" id="agriSection">
+      <h2>🌱 স্মার্ট কৃষি ও ফসলভিত্তিক পরামর্শ</h2>
+      <span class="crop-pill" id="cropSoilBadge">ফসল: ধান (বোরো / আমন) | মাটি: দোআঁশ | অঞ্চল: ঢাকা</span>
+
+      <div class="agri-item" id="agriAdvice">আবহাওয়ার তথ্য পাওয়ার পর কৃষি পরামর্শ দেখানো হবে।</div>
+      <div class="agri-item" id="agriHarvest" style="font-weight: bold;"></div>
+      <div class="agri-item" id="sowMsg" style="font-weight: bold;"></div>
+      <div class="agri-item" id="sprayMsg" style="font-weight: bold;"></div>
+      <div class="agri-item" id="agriRain"></div>
+
+      <div class="crop-box" id="cropSpecificBox">
+        <h3 id="cropTitle">🌾 ফসলভিত্তিক করণীয়</h3>
+        <p id="cropSoilTip">মাটির বৈশিষ্ট্য অনুযায়ী পরামর্শ লোড হচ্ছে...</p>
+        <p id="cropWeatherTip">আবহাওয়া অনুযায়ী করণীয় লোড হচ্ছে...</p>
+        <p id="cropCareTip">যত্ন ও রোগবালাই সতর্কতা লোড হচ্ছে...</p>
+      </div>
+
+      <p class="disclaimer">এটি পূর্বাভাসভিত্তিক সাধারণ পরামর্শ। গুরুত্বপূর্ণ সিদ্ধান্তের আগে স্থানীয় কৃষি কর্মকর্তার পরামর্শ নিন।</p>
+    </section>
+  </div>
+
+  <!-- ==================== পেজ ৩: আরও (ভবিষ্যতের ফিচারের জন্য সংরক্ষিত) ==================== -->
+  <div id="page3" class="app-page">
+    <section class="card placeholder-page">
+      <h2>✨ আরও ফিচার শীঘ্রই আসছে</h2>
+      <p style="color: var(--muted); max-width: 460px; margin: 8px auto 14px;">
+        তৃতীয় পেজটি আপনার ভবিষ্যতের নতুন ফিচার বা সেকশন যুক্ত করার জন্য প্রস্তুত রাখা হয়েছে।
+      </p>
+      <span class="crop-pill">পেজ ৩ — কাস্টম সেকশনের জন্য খালি</span>
+    </section>
+
+    <fieldset class="part-fieldset">
+      <legend>⚙️ নোটিফিকেশন ও অ্যাপ সেটিংস</legend>
+      <div class="field-group">
+        <h3>🔔 পুশ নোটিফিকেশন</h3>
+        <p style="font-size: 13.5px; color: var(--muted); margin: 4px 0 8px;">জরুরি আবহাওয়া ও কৃষি সতর্কবার্তা পেতে পুশ নোটিফিকেশন চালু করুন।</p>
+        <button type="button" id="pushBtn">পুশ নোটিফিকেশন চালু করুন</button>
+        <p id="notificationStatus"></p>
+      </div>
+
+      <div class="field-group" id="installCard" hidden style="margin-top: 14px;">
+        <h3>📲 অ্যাপ ইনস্টল</h3>
+        <p style="font-size: 13.5px; color: var(--muted); margin: 4px 0 8px;">অফলাইনে দ্রুত ব্যবহারের জন্য Weather BD Pro আপনার ফোনে ইনস্টল করুন।</p>
+        <button type="button" id="installBtn">Install App</button>
+      </div>
+
+      <div class="field-group" style="margin-top: 14px;">
+        <h3>🔄 তথ্য রিফ্রেশ</h3>
+        <button type="button" id="refreshBtn" class="secondary">🔄 আবহাওয়া রিফ্রেশ</button>
+        <p id="updated"></p>
+      </div>
+    </fieldset>
+  </div>
 </main>
 
 <footer>
@@ -240,10 +369,106 @@
   আবহাওয়ার তথ্য: Open-Meteo (মডেলভিত্তিক পূর্বাভাস, স্টেশনের সরাসরি রিডিং নয়)
 </footer>
 
-<!-- ১) মূল অ্যাপ: আবহাওয়া, কৃষি পরামর্শ, ইনস্টল বাটন (Firebase ছাড়াই চলে) -->
+<!-- নিচের ৩-ট্যাব নেভিগেশন বার -->
+<nav class="bottom-nav" aria-label="মূল নেভিগেশন">
+  <button type="button" class="nav-tab active" data-page="page1">
+    <span class="nav-icon">🏠</span>
+    <span>হোম</span>
+  </button>
+  <button type="button" class="nav-tab" data-page="page2">
+    <span class="nav-icon">🌱</span>
+    <span>কৃষি পরামর্শ</span>
+  </button>
+  <button type="button" class="nav-tab" data-page="page3">
+    <span class="nav-icon">☰</span>
+    <span>আরও</span>
+  </button>
+</nav>
+
+<!-- ১) মূল অ্যাপ: ৩-পেজ নেভিগেশন, আবহাওয়া ও ফসলভিত্তিক পরামর্শ -->
 <script>
   const $ = (id) => document.getElementById(id);
   let lat = 23.8103, lon = 90.4125, city = "ঢাকা", requestNumber = 0, cache = {}, installPrompt = null;
+  let lastCurrent = null, lastDaily = null;
+
+  // ৩টি পেজের মধ্যে ট্যাব পরিবর্তনের লজিক
+  const navTabs = document.querySelectorAll(".nav-tab");
+  const appPages = document.querySelectorAll(".app-page");
+
+  function switchPage(targetId) {
+    appPages.forEach((page) => {
+      page.classList.toggle("active", page.id === targetId);
+    });
+    navTabs.forEach((tab) => {
+      tab.classList.toggle("active", tab.dataset.page === targetId);
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  navTabs.forEach((tab) => {
+    tab.addEventListener("click", () => switchPage(tab.dataset.page));
+  });
+
+  const bnToEnDistrict = {
+    "ঢাকা": "Dhaka", "দিনাজপুর": "Dinajpur", "রংপুর": "Rangpur", "রাজশাহী": "Rajshahi",
+    "চট্টগ্রাম": "Chattogram", "সিলেট": "Sylhet", "খুলনা": "Khulna", "বরিশাল": "Barishal",
+    "ময়মনসিংহ": "Mymensingh", "কুমিল্লা": "Cumilla", "বগুড়া": "Bogura", "যশোর": "Jessore",
+    "পাবনা": "Pabna", "কুষ্টিয়া": "Kushtia", "ফেনী": "Feni", "কক্সবাজার": "Cox's Bazar",
+    "ঠাকুরগাঁও": "Thakurgaon", "পঞ্চগড়": "Panchagarh", "নীলফামারী": "Nilphamari",
+    "লালমনিরহাট": "Lalmonirhat", "কুড়িগ্রাম": "Kurigram", "গাইবান্ধা": "Gaibandha",
+    "নোয়াখালী": "Noakhali", "গাজীপুর": "Gazipur", "নারায়ণগঞ্জ": "Narayanganj",
+    "টাঙ্গাইল": "Tangail", "ফরিদপুর": "Faridpur", "সাতক্ষীরা": "Satkhira", "ভোলা": "Bhola",
+    "পটুয়াখালী": "Patuakhali", "মৌলভীবাজার": "Moulvibazar", "হবিগঞ্জ": "Habiganj",
+    "সুনামগঞ্জ": "Sunamganj"
+  };
+
+  const cropGuides = {
+    "ধান": {
+      label: "ধান (বোরো / আমন)",
+      soil: {
+        "দোআঁশ": "দোআঁশ মাটি ধানের জন্য বেশ উপযোগী; পরিমিত পানি ধরে রাখতে পারে।",
+        "এঁটেল": "এঁটেল মাটিতে পানি দীর্ঘক্ষণ জমে থাকে বলে ধানের চাষ ও সেচ নিয়ন্ত্রণ সহজ হয়।",
+        "বেলে": "বেলে মাটিতে পানি দ্রুত নিচে চলে যায়, তাই অল্প ব্যবধানে হালকা সেচ ও জৈব সার দিন।"
+      },
+      care: "ব্লাস্ট, পাতাপোড়া ও বাদামি গাছফড়িং (BPH) আক্রমণ নজরে রাখুন; সুষম সার প্রয়োগ করুন।"
+    },
+    "গম": {
+      label: "গম",
+      soil: {
+        "দোআঁশ": "সুবিনীত দোআঁশ বা বেলে-দোআঁশ মাটি গম চাষের জন্য সবচেয়ে ভালো।",
+        "এঁটেল": "ভারী এঁটেল মাটিতে জলাবদ্ধতা এড়াতে নালা কেটে অতিরিক্ত পানি বের করে দিন।",
+        "বেলে": "বেলে মাটিতে জৈব পদার্থ বাড়িয়ে সময়মতো হালকা সেচ দিন।"
+      },
+      care: "শীষ বের হওয়ার সময় মাটিতে পর্যাপ্ত রস রাখুন এবং পাতার মরিচা রোগ (Leaf Rust) পর্যবেক্ষণ করুন।"
+    },
+    "ভুট্টা": {
+      label: "ভুট্টা",
+      soil: {
+        "দোআঁশ": "উর্বর ও পানি নিষ্কাশনযুক্ত দোআঁশ মাটিতে ভুট্টার ফলন ভালো হয়।",
+        "এঁটেল": "এঁটেল মাটিতে শিকড়ের শ্বাস-প্রশ্বাসের জন্য জলাবদ্ধতা হতে দেবেন না।",
+        "বেলে": "বেলে মাটিতে নাইট্রোজেন ও জৈব সার ভাগ করে প্রয়োগ করলে ফলন বাড়ে।"
+      },
+      care: "মোচা গঠনের সময় পানির ঘাটতি এড়িয়ে চলুন এবং ফল ছিদ্রকারী পোকা (Fall Armyworm) খেয়াল রাখুন।"
+    },
+    "সরিষা": {
+      label: "সরিষা",
+      soil: {
+        "দোআঁশ": "হালকা থেকে মাঝারি দোআঁশ মাটি সরিষা চাষের জন্য আদর্শ।",
+        "এঁটেল": "এঁটেল মাটিতে জলাবদ্ধতা থাকলে সরিষার শিকড় পচে যেতে পারে, তাই নিষ্কাশন রাখুন।",
+        "বেলে": "বেলে মাটিতে প্রয়োজনীয় রস ও সার থাকলে সরিষা ভালো হয়।"
+      },
+      care: "ফুল ও শুঁটি ধরার সময় জাবপোকা ও অল্টারনারিয়া পাতাঝলসা রোগের দিকে নজর রাখুন।"
+    },
+    "শাকসবজি": {
+      label: "শাকসবজি (আলু / টমেটো / লাউ)",
+      soil: {
+        "দোআঁশ": "জৈব সারসমৃদ্ধ দোআঁশ মাটি সব ধরনের শাকসবজির জন্য উত্তম।",
+        "এঁটেল": "এঁটেল মাটিতে উঁচু বেড তৈরি করে লাগালে শিকড় ও কন্দ ভালো থাকে।",
+        "বেলে": "বেলে মাটিতে নিয়মিত অল্প পরিমাণে সেচ ও কম্পোস্ট সার ব্যবহার করুন।"
+      },
+      care: "চারা অবস্থায় মাছিপোকা, লেদা পোকা ও ছত্রাকজনিত ঝলসা রোগ থেকে সুরক্ষা দিন।"
+    }
+  };
 
   // Service worker (ইনস্টল ও অফলাইনের জন্য জরুরি)
   window.swReady = null;
@@ -304,11 +529,16 @@
 
   function timeFormat(value) { return !value ? "--" : value.slice(11, 16); }
 
-  async function searchCity() {
-    const name = $("search").value.trim();
+  async function searchCity(overrideName = null) {
+    const raw = typeof overrideName === "string" ? overrideName : $("search").value.trim();
+    const name = bnToEnDistrict[raw] || raw;
     if (!name) return setStatus("একটি জেলা বা শহরের নাম লিখুন।", true);
     const key = Object.keys(districts).find(k => k.toLowerCase() === name.toLowerCase());
-    if (key) { lat = districts[key][0]; lon = districts[key][1]; city = key; loadWeather(); return; }
+    if (key) {
+      lat = districts[key][0]; lon = districts[key][1]; city = raw || key;
+      loadWeather();
+      return;
+    }
     try {
       setStatus("স্থান অনুসন্ধান হচ্ছে...");
       const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=bn&format=json`);
@@ -352,6 +582,7 @@
 
   function renderWeather(data) {
     const c = data.current, d = data.daily;
+    lastCurrent = c; lastDaily = d;
     const [icon, desc] = weatherInfo(c.weather_code);
     $("place").textContent = city + ", বাংলাদেশ"; $("weatherIcon").textContent = icon;
     $("temperature").textContent = Math.round(c.temperature_2m) + "°C"; $("condition").textContent = desc;
@@ -375,6 +606,32 @@
       const rain = document.createElement("div"); rain.textContent = "🌧️ " + data.precipitation_probability_max[i] + "%";
       item.append(day, symbol, temp, rain); container.appendChild(item);
     });
+  }
+
+  function updateCropSpecificAdvice(c, d) {
+    const cropKey = $("cropSelect").value;
+    const soilKey = $("soilSelect").value;
+    const guide = cropGuides[cropKey] || cropGuides["ধান"];
+    const rainProb = d?.precipitation_probability_max?.[0] ?? 0;
+
+    $("cropSoilBadge").textContent = `ফসল: ${guide.label} | মাটি: ${soilKey} | অঞ্চল: ${city}`;
+    $("cropTitle").textContent = `🌾 ${guide.label} — ফসলভিত্তিক পরামর্শ`;
+    $("cropSoilTip").textContent = `🪨 মাটির পরামর্শ (${soilKey}): ` + (guide.soil[soilKey] || "");
+
+    let weatherTip = "🌤️ বর্তমান আবহাওয়া ফসলের স্বাভাবিক বৃদ্ধির অনুকূলে রয়েছে।";
+    if (c && d) {
+      if (rainProb >= 60 || c.precipitation > 0) {
+        weatherTip = `🌧️ বৃষ্টির সম্ভাবনা/বৃষ্টি (${rainProb}%) থাকায় ${cropKey} ক্ষেতে নতুন সেচ বা সার দেবেন না; পানি নিষ্কাশন নিশ্চিত করুন।`;
+      } else if (c.temperature_2m >= 34) {
+        weatherTip = `☀️ তাপমাত্রা ${Math.round(c.temperature_2m)}°C থাকায় ${cropKey} ক্ষেতে মাটির আর্দ্রতা বুঝে সেচ দিন।`;
+      } else if (c.temperature_2m <= 14) {
+        weatherTip = `❄️ তাপমাত্রা ${Math.round(c.temperature_2m)}°C থাকায় ${cropKey} চারার যত্ন ও কুয়াশা/ঠান্ডা সুরক্ষায় নজর দিন।`;
+      } else if (c.wind_speed_10m >= 25) {
+        weatherTip = `💨 বাতাসের গতি ${c.wind_speed_10m} km/h হওয়ায় লম্বা বা কোমল গাছের সাপোর্ট ও স্প্রে সতর্কতা বজায় রাখুন।`;
+      }
+    }
+    $("cropWeatherTip").textContent = weatherTip;
+    $("cropCareTip").textContent = `🛡️ যত্ন ও সুরক্ষা: ${guide.care}`;
   }
 
   function agricultureAdvice(c, d) {
@@ -406,6 +663,8 @@
     $("sowMsg").textContent = sowMsg; $("sowMsg").style.color = canSow ? "#087e4b" : "#d97706";
     $("sprayMsg").textContent = sprayMsg; $("sprayMsg").style.color = canSpray ? "#087e4b" : "#d97706";
     $("agriRain").textContent = "🌧️ আজ বৃষ্টির সম্ভাবনা: " + rainProb + "%";
+
+    updateCropSpecificAdvice(c, d);
   }
 
   function weatherAlert(c, d) {
@@ -417,7 +676,15 @@
     $("alert").textContent = alerts.length ? alerts.join(" ") : "✅ কোনো বড় দুর্যোগ সতর্কতা নেই।";
   }
 
-  $("searchBtn").addEventListener("click", searchCity);
+  $("regionSelect").addEventListener("change", (e) => {
+    const selectedBn = e.target.value;
+    $("search").value = selectedBn;
+    searchCity(selectedBn);
+  });
+  $("soilSelect").addEventListener("change", () => updateCropSpecificAdvice(lastCurrent, lastDaily));
+  $("cropSelect").addEventListener("change", () => updateCropSpecificAdvice(lastCurrent, lastDaily));
+
+  $("searchBtn").addEventListener("click", () => searchCity());
   $("locationBtn").addEventListener("click", myLocation);
   $("refreshBtn").addEventListener("click", () => loadWeather(true));
   $("search").addEventListener("keydown", (e) => { if (e.key === "Enter") searchCity(); });
@@ -427,6 +694,7 @@
     if (saved?.data) { city = saved.city; lat = saved.lat; lon = saved.lon; renderWeather(saved.data); }
   } catch (e) {}
 
+  updateCropSpecificAdvice(lastCurrent, lastDaily);
   loadWeather();
 </script>
 
@@ -526,3 +794,4 @@
 </script>
 </body>
 </html>
+  
