@@ -696,6 +696,15 @@
 
   updateCropSpecificAdvice(lastCurrent, lastDaily);
   loadWeather();
+  // সিলেক্ট করা জেলা সেভ এবং রিস্টোর করা
+$("regionSelect").addEventListener("change", (e) => {
+localStorage.setItem("selectedRegion", e.target.value);
+});
+if (localStorage.getItem("selectedRegion")) {
+const savedRegion = localStorage.getItem("selectedRegion");
+$("regionSelect").value = savedRegion;
+searchCity(savedRegion);
+  }
 </script>
 
 <!-- ২) পুশ নোটিফিকেশন (Firebase) — এটা আলাদা, তাই ব্যর্থ হলেও আবহাওয়া চলবে -->
