@@ -564,7 +564,6 @@
     if (!force && cache[key] && Date.now() - cache[key].time < 300000) {
       renderWeather(cache[key].data); setStatus("সংরক্ষিত তথ্য দেখানো হচ্ছে।"); return;
     }
-    if(data.current.condition.text.includes("rain")) { document.body.className = "bg-rainy"; } else { document.body.className = "bg-sunny"; }
     setStatus("লাইভ আবহাওয়া সংগ্রহ হচ্ছে...");
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
