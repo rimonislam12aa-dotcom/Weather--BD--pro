@@ -134,7 +134,7 @@
     #status, #notificationStatus, #updated { font-size: 13.5px; color: var(--muted); margin: 8px 0 0; }
     footer { text-align: center; padding: 20px 16px; color: var(--muted); font-size: 13px; }
 
-    /* নিচের ৩-ট্যাব নেভিগেশন বার (FarmRise স্টাইল) */
+     /* নিচের ৩-ট্যাব নেভিগেশন বার (FarmRise স্টাইল) */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -230,8 +230,7 @@
           <option value="সুনামগঞ্জ">সুনামগঞ্জ</option>
         </select>
       </div>
-
-      <div class="field-group">
+       <div class="field-group">
         <input id="search" list="districts" placeholder="অথবা শহর/উপজেলার নাম লিখুন (যেমন: Birganj, Dhaka)">
         <datalist id="districts">
           <option value="Dhaka"><option value="Dinajpur"><option value="Rangpur"><option value="Rajshahi">
@@ -283,7 +282,8 @@
       <p id="alert">বর্তমান আবহাওয়ার তথ্যের ভিত্তিতে সতর্কতা দেখানো হবে।</p>
     </section>
   </div>
- <!-- ==================== পেজ ২: ফসলভিত্তিক কৃষি পরামর্শ ==================== -->
+
+  <!-- ==================== পেজ ২: ফসলভিত্তিক কৃষি পরামর্শ ==================== -->
   <div id="page2" class="app-page">
     <fieldset class="part-fieldset">
       <legend>🌾 মাটি ও ফসল নির্বাচন</legend>
@@ -328,34 +328,34 @@
       <p class="disclaimer">এটি পূর্বাভাসভিত্তিক সাধারণ পরামর্শ। গুরুত্বপূর্ণ সিদ্ধান্তের আগে স্থানীয় কৃষি কর্মকর্তার পরামর্শ নিন।</p>
     </section>
   </div>
-<!-- ==================== পেজ ৩: আরও / স্ক্যানার ফিচার ==================== -->
-<div id="page3" class="app-page">
-  <section class="card">
-    <h2>🔍 রোগ নির্ণয় স্ক্যানার</h2>
-    <p style="color: var(--muted); margin-bottom: 12px;">
-      ফসলের পাতার ছবি আপলোড করে প্রাথমিক পরীক্ষা ও পরামর্শ দেখুন।
-    </p>
 
-    <div class="field-group">
-      <label for="leafImage">ছবি নির্বাচন করুন:</label>
-      <input type="file" id="leafImage" accept="image/*">
-    </div>
+  <!-- ==================== পেজ ৩: আরও / স্ক্যানার ফিচার ==================== -->
+  <div id="page3" class="app-page">
+    <section class="card">
+      <h2>🔍 রোগ নির্ণয় স্ক্যানার</h2>
+      <p style="color: var(--muted); margin-bottom: 12px;">
+        ফসলের পাতার ছবি আপলোড করে প্রাথমিক পরীক্ষা ও পরামর্শ দেখুন।
+      </p>
 
-    <div id="imagePreview" style="margin-top: 14px; text-align: center; display: none;">
-      <img id="uploadedImg" alt="আপলোড করা ছবি" style="max-width: 100%; max-height: 280px; border-radius: 10px;">
-    </div>
+      <div class="field-group">
+        <label for="leafImage">ছবি নির্বাচন করুন:</label>
+        <input type="file" id="leafImage" accept="image/*">
+      </div>
 
-    <button type="button" id="scanBtn" style="margin-top: 14px; width: 100%; display: none;">
-      পরীক্ষা করুন
-    </button>
+      <div id="imagePreview" style="margin-top: 14px; text-align: center; display: none;">
+        <img id="uploadedImg" alt="আপলোড করা ছবি" style="max-width: 100%; max-height: 280px; border-radius: 10px;">
+      </div>
 
-    <div id="scanResult" style="margin-top: 18px; padding: 14px; border-radius: 10px; display: none;">
-      <h3 id="diseaseName" style="margin-top: 0;"></h3>
-      <p id="remedyAdvice" style="margin-bottom: 0;"></p>
-    </div>
-  </section>
-</div>
-  
+      <button type="button" id="scanBtn" style="margin-top: 14px; width: 100%; display: none;">
+        পরীক্ষা করুন
+      </button>
+
+      <div id="scanResult" style="margin-top: 18px; padding: 14px; border-radius: 10px; display: none;">
+        <h3 id="diseaseName" style="margin-top: 0;"></h3>
+        <p id="remedyAdvice" style="margin-bottom: 0;"></p>
+      </div>
+    </section>
+
     <fieldset class="part-fieldset">
       <legend>⚙️ নোটিফিকেশন ও অ্যাপ সেটিংস</legend>
       <div class="field-group">
@@ -400,12 +400,9 @@
     <span class="nav-icon">☰</span>
     <span>আরও</span>
   </button>
-</nav>
-
-<!-- ১) মূল অ্যাপ: ৩-পেজ নেভিগেশন, আবহাওয়া ও ফসলভিত্তিক পরামর্শ -->
+        </nav>
+  <!-- ১) মূল অ্যাপ: ৩-পেজ নেভিগেশন, আবহাওয়া ও ফসলভিত্তিক পরামর্শ -->
 <script>
-  const $ = (id) => document.getElementById(id);
-  
   const $ = (id) => document.getElementById(id);
   let lat = 23.8103, lon = 90.4125, city = "ঢাকা", requestNumber = 0, cache = {}, installPrompt = null;
   let lastCurrent = null, lastDaily = null;
@@ -568,7 +565,6 @@
       loadWeather();
     } catch (err) { setStatus(err.message, true); }
   }
-
   function myLocation() {
     if (!navigator.geolocation) return setStatus("GPS সুবিধা নেই।", true);
     setStatus("অবস্থান খোঁজা হচ্ছে...");
@@ -695,110 +691,111 @@
     $("alert").textContent = alerts.length ? alerts.join(" ") : "✅ কোনো বড় দুর্যোগ সতর্কতা নেই।";
   }
 
-function initWeatherApp() {
-  const regionSelect = $("regionSelect");
-  const soilSelect = $("soilSelect");
-  const cropSelect = $("cropSelect");
-  const searchInput = $("search");
-  const searchBtn = $("searchBtn");
-  const locationBtn = $("locationBtn");
-  const refreshBtn = $("refreshBtn");
+  function initWeatherApp() {
+    const regionSelect = $("regionSelect");
+    const soilSelect = $("soilSelect");
+    const cropSelect = $("cropSelect");
+    const searchInput = $("search");
+    const searchBtn = $("searchBtn");
+    const locationBtn = $("locationBtn");
+    const refreshBtn = $("refreshBtn");
 
-  // 1. Restore saved state safely
-  let hasSavedRegion = false;
+    // 1. Restore saved state safely
+    let hasSavedRegion = false;
 
-  try {
-    const saved = JSON.parse(localStorage.getItem("weatherBDLast"));
-    if (saved?.data) {
-      city = saved.city ?? city;
-      lat = saved.lat ?? lat;
-      lon = saved.lon ?? lon;
-      renderWeather(saved.data);
+    try {
+      const saved = JSON.parse(localStorage.getItem("weatherBDLast"));
+      if (saved?.data) {
+        city = saved.city ?? city;
+        lat = saved.lat ?? lat;
+        lon = saved.lon ?? lon;
+        renderWeather(saved.data);
+      }
+    } catch (err) {
+      console.warn("Failed to restore last weather state:", err);
     }
-  } catch (err) {
-    console.warn("Failed to restore last weather state:", err);
-  }
 
-  const savedRegion = localStorage.getItem("selectedRegion");
-  if (savedRegion && regionSelect) {
-    regionSelect.value = savedRegion;
-    if (searchInput) searchInput.value = savedRegion;
-    hasSavedRegion = true;
-  }
+    const savedRegion = localStorage.getItem("selectedRegion");
+    if (savedRegion && regionSelect) {
+      regionSelect.value = savedRegion;
+      if (searchInput) searchInput.value = savedRegion;
+      hasSavedRegion = true;
+    }
 
-  // 2. Attach event listeners cleanly
-  regionSelect?.addEventListener("change", (e) => {
-    const selectedBn = e.target.value;
-    localStorage.setItem("selectedRegion", selectedBn);
-    if (searchInput) searchInput.value = selectedBn;
-    if (selectedBn) searchCity(selectedBn);
-  });
+    // 2. Attach event listeners cleanly
+    regionSelect?.addEventListener("change", (e) => {
+      const selectedBn = e.target.value;
+      localStorage.setItem("selectedRegion", selectedBn);
+      if (searchInput) searchInput.value = selectedBn;
+      if (selectedBn) searchCity(selectedBn);
+    });
 
-  soilSelect?.addEventListener("change", () => {
+    soilSelect?.addEventListener("change", () => {
+      updateCropSpecificAdvice(lastCurrent, lastDaily);
+    });
+
+    cropSelect?.addEventListener("change", () => {
+      updateCropSpecificAdvice(lastCurrent, lastDaily);
+    });
+
+    searchBtn?.addEventListener("click", () => {
+      searchCity(searchInput?.value);
+    });
+
+    locationBtn?.addEventListener("click", myLocation);
+
+    refreshBtn?.addEventListener("click", () => {
+      loadWeather(true);
+    });
+
+    searchInput?.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        searchCity(searchInput.value);
+      }
+    });
+
+    // 3. Initial data load (avoid redundant double fetch on startup)
     updateCropSpecificAdvice(lastCurrent, lastDaily);
-  });
 
-  cropSelect?.addEventListener("change", () => {
-    updateCropSpecificAdvice(lastCurrent, lastDaily);
-  });
+    if (hasSavedRegion) {
+      searchCity(savedRegion);
+    } else {
+      loadWeather();
+    }
+      }
+   // স্ক্যানার ফিচার লজিক
+  const leafImage = $("leafImage");
+  const scanBtn = $("scanBtn");
+  const imagePreview = $("imagePreview");
+  const uploadedImg = $("uploadedImg");
+  const scanResult = $("scanResult");
+  const diseaseName = $("diseaseName");
+  const remedyAdvice = $("remedyAdvice");
 
-  searchBtn?.addEventListener("click", () => {
-    searchCity(searchInput?.value);
-  });
-
-  locationBtn?.addEventListener("click", myLocation);
-
-  refreshBtn?.addEventListener("click", () => {
-    loadWeather(true);
-  });
-
-  searchInput?.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      searchCity(searchInput.value);
+  leafImage?.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        uploadedImg.src = event.target.result;
+        imagePreview.style.display = "block";
+        scanBtn.style.display = "block";
+        scanResult.style.display = "none";
+      };
+      reader.readAsDataURL(file);
     }
   });
 
-  // 3. Initial data load (avoid redundant double fetch on startup)
-  updateCropSpecificAdvice(lastCurrent, lastDaily);
+  scanBtn?.addEventListener("click", () => {
+    // পরবর্তী ধাপে এখানে এপিআই ইন্টিগ্রেশন হবে
+    diseaseName.textContent = "পাতার দাগ রোগ (Leaf Spot)";
+    remedyAdvice.textContent = "প্রতিরোধে ম্যানকোজেব জাতীয় ছত্রাকনাশক স্প্রে করুন।";
+    scanResult.style.display = "block";
+    scanResult.style.background = "#eef5f1";
+  });
 
-  if (hasSavedRegion) {
-    searchCity(savedRegion);
-  } else {
-    loadWeather();
-  }
-}
-// স্ক্যানার ফিচার লজিক
-const leafImage = $("leafImage");
-const scanBtn = $("scanBtn");
-const imagePreview = $("imagePreview");
-const uploadedImg = $("uploadedImg");
-const scanResult = $("scanResult");
-const diseaseName = $("diseaseName");
-const remedyAdvice = $("remedyAdvice");
-
-leafImage?.addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      uploadedImg.src = event.target.result;
-      imagePreview.style.display = "block";
-      scanBtn.style.display = "block";
-      scanResult.style.display = "none";
-    };
-    reader.readAsDataURL(file);
-  }
-});
-
-scanBtn?.addEventListener("click", () => {
-  // পরবর্তী ধাপে এখানে এপিআই ইন্টিগ্রেশন হবে
-  diseaseName.textContent = "পাতার দাগ রোগ (Leaf Spot)";
-  remedyAdvice.textContent = "প্রতিরোধে ম্যানকোজেব জাতীয় ছত্রাকনাশক স্প্রে করুন।";
-  scanResult.style.display = "block";
-  scanResult.style.background = "#eef5f1";
-});
-document.addEventListener("DOMContentLoaded", initWeatherApp);
+  document.addEventListener("DOMContentLoaded", initWeatherApp);
 </script>
 
 <!-- ২) পুশ নোটিফিকেশন (Firebase) — এটা আলাদা, তাই ব্যর্থ হলেও আবহাওয়া চলবে -->
