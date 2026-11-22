@@ -405,6 +405,8 @@
 <!-- ১) মূল অ্যাপ: ৩-পেজ নেভিগেশন, আবহাওয়া ও ফসলভিত্তিক পরামর্শ -->
 <script>
   const $ = (id) => document.getElementById(id);
+  
+  const $ = (id) => document.getElementById(id);
   let lat = 23.8103, lon = 90.4125, city = "ঢাকা", requestNumber = 0, cache = {}, installPrompt = null;
   let lastCurrent = null, lastDaily = null;
 
@@ -692,8 +694,6 @@
     if (c.weather_code >= 95) alerts.push("⛈️ বজ্রঝড়ের আশঙ্কা। নিরাপদ স্থানে থাকুন।");
     $("alert").textContent = alerts.length ? alerts.join(" ") : "✅ কোনো বড় দুর্যোগ সতর্কতা নেই।";
   }
-
-  const $ = (id) => document.getElementById(id);
 
 function initWeatherApp() {
   const regionSelect = $("regionSelect");
