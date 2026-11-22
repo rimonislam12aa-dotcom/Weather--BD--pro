@@ -328,17 +328,34 @@
       <p class="disclaimer">এটি পূর্বাভাসভিত্তিক সাধারণ পরামর্শ। গুরুত্বপূর্ণ সিদ্ধান্তের আগে স্থানীয় কৃষি কর্মকর্তার পরামর্শ নিন।</p>
     </section>
   </div>
+<!-- ==================== পেজ ৩: আরও / স্ক্যানার ফিচার ==================== -->
+<div id="page3" class="app-page">
+  <section class="card">
+    <h2>🔍 রোগ নির্ণয় স্ক্যানার</h2>
+    <p style="color: var(--muted); margin-bottom: 12px;">
+      ফসলের পাতার ছবি আপলোড করে প্রাথমিক পরীক্ষা ও পরামর্শ দেখুন।
+    </p>
 
-  <!-- ==================== পেজ ৩: আরও (ভবিষ্যতের ফিচারের জন্য সংরক্ষিত) ==================== -->
-  <div id="page3" class="app-page">
-    <section class="card placeholder-page">
-      <h2>✨ আরও ফিচার শীঘ্রই আসছে</h2>
-      <p style="color: var(--muted); max-width: 460px; margin: 8px auto 14px;">
-        তৃতীয় পেজটি আপনার ভবিষ্যতের নতুন ফিচার বা সেকশন যুক্ত করার জন্য প্রস্তুত রাখা হয়েছে।
-      </p>
-      <span class="crop-pill">পেজ ৩ — কাস্টম সেকশনের জন্য খালি</span>
-    </section>
+    <div class="field-group">
+      <label for="leafImage">ছবি নির্বাচন করুন:</label>
+      <input type="file" id="leafImage" accept="image/*">
+    </div>
 
+    <div id="imagePreview" style="margin-top: 14px; text-align: center; display: none;">
+      <img id="uploadedImg" alt="আপলোড করা ছবি" style="max-width: 100%; max-height: 280px; border-radius: 10px;">
+    </div>
+
+    <button type="button" id="scanBtn" style="margin-top: 14px; width: 100%; display: none;">
+      পরীক্ষা করুন
+    </button>
+
+    <div id="scanResult" style="margin-top: 18px; padding: 14px; border-radius: 10px; display: none;">
+      <h3 id="diseaseName" style="margin-top: 0;"></h3>
+      <p id="remedyAdvice" style="margin-bottom: 0;"></p>
+    </div>
+  </section>
+</div>
+  
     <fieldset class="part-fieldset">
       <legend>⚙️ নোটিফিকেশন ও অ্যাপ সেটিংস</legend>
       <div class="field-group">
