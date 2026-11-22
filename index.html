@@ -676,35 +676,83 @@
     $("alert").textContent = alerts.length ? alerts.join(" ") : "✅ কোনো বড় দুর্যোগ সতর্কতা নেই।";
   }
 
-  $("regionSelect").addEventListener("change", (e) => {
-    const selectedBn = e.target.value;
-    $("search").value = selectedBn;
-    searchCity(selectedBn);
-  });
-  $("soilSelect").addEventListener("change", () => updateCropSpecificAdvice(lastCurrent, lastDaily));
-  $("cropSelect").addEventListener("change", () => updateCropSpecificAdvice(lastCurrent, lastDaily));
+  const $ = (id) => document.getElementById(id);
 
-  $("searchBtn").addEventListener("click", () => searchCity());
-  $("locationBtn").addEventListener("click", myLocation);
-  $("refreshBtn").addEventListener("click", () => loadWeather(true));
-  $("search").addEventListener("keydown", (e) => { if (e.key === "Enter") searchCity(); });
+function initWeatherApp() {
+  const regionSelect = $("regionSelect");
+  const soilSelect = $("soilSelect");
+  const cropSelect = $("cropSelect");
+  const searchInput = $("search");
+  const searchBtn = $("searchBtn");
+  const locationBtn = $("locationBtn");
+  const refreshBtn = $("refreshBtn");
+
+  // 1. Restore saved state safely
+  let hasSavedRegion = false;
 
   try {
     const saved = JSON.parse(localStorage.getItem("weatherBDLast"));
-    if (saved?.data) { city = saved.city; lat = saved.lat; lon = saved.lon; renderWeather(saved.data); }
-  } catch (e) {}
-
-  updateCropSpecificAdvice(lastCurrent, lastDaily);
-  loadWeather();
-  // সিলেক্ট করা জেলা সেভ এবং রিস্টোর করা
-$("regionSelect").addEventListener("change", (e) => {
-localStorage.setItem("selectedRegion", e.target.value);
-});
-if (localStorage.getItem("selectedRegion")) {
-const savedRegion = localStorage.getItem("selectedRegion");
-$("regionSelect").value = savedRegion;
-searchCity(savedRegion);
+    if (saved?.data) {
+      city = saved.city ?? city;
+      lat = saved.lat ?? lat;
+      lon = saved.lon ?? lon;
+      renderWeather(saved.data);
+    }
+  } catch (err) {
+    console.warn("Failed to restore last weather state:", err);
   }
+
+  const savedRegion = localStorage.getItem("selectedRegion");
+  if (savedRegion && regionSelect) {
+    regionSelect.value = savedRegion;
+    if (searchInput) searchInput.value = savedRegion;
+    hasSavedRegion = true;
+  }
+
+  // 2. Attach event listeners cleanly
+  regionSelect?.addEventListener("change", (e) => {
+    const selectedBn = e.target.value;
+    localStorage.setItem("selectedRegion", selectedBn);
+    if (searchInput) searchInput.value = selectedBn;
+    if (selectedBn) searchCity(selectedBn);
+  });
+
+  soilSelect?.addEventListener("change", () => {
+    updateCropSpecificAdvice(lastCurrent, lastDaily);
+  });
+
+  cropSelect?.addEventListener("change", () => {
+    updateCropSpecificAdvice(lastCurrent, lastDaily);
+  });
+
+  searchBtn?.addEventListener("click", () => {
+    searchCity(searchInput?.value);
+  });
+
+  locationBtn?.addEventListener("click", myLocation);
+
+  refreshBtn?.addEventListener("click", () => {
+    loadWeather(true);
+  });
+
+  searchInput?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      searchCity(searchInput.value);
+    }
+  });
+
+  // 3. Initial data load (avoid redundant double fetch on startup)
+  updateCropSpecificAdvice(lastCurrent, lastDaily);
+
+  if (hasSavedRegion) {
+    searchCity(savedRegion);
+  } else {
+    loadWeather();
+  }
+}
+
+document.addEventListener("DOMContentLoaded", initWeatherApp);
 </script>
 
 <!-- ২) পুশ নোটিফিকেশন (Firebase) — এটা আলাদা, তাই ব্যর্থ হলেও আবহাওয়া চলবে -->
